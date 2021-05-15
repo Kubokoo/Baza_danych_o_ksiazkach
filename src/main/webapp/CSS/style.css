@@ -1,7 +1,11 @@
 @charset "UTF-8";
 
 html {
-    background: #49fae9;
+    background: rgb(11,0,255);
+    background: linear-gradient(45deg, rgba(11,0,255,1) 0%, rgba(0,255,226,1) 50%, rgba(11,0,255,1) 100%);
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
 }
 
 #kontener{
@@ -12,6 +16,16 @@ html {
     background-color: #79ffe3;
     border: 4px solid #49fae9;
     border-radius: 25px;
+}
+
+#banner img{
+    width: 7%;
+    vertical-align: middle;
+}
+
+#header a {
+    text-decoration: none;
+    color: inherit;
 }
 
 #naglowek{
@@ -53,7 +67,6 @@ html {
 #newsy{
     display: block;
     float: left;
-    width: 150px;
     margin-bottom: 10px;
 }
 
@@ -67,12 +80,15 @@ html {
     color: black;
     margin-bottom: 5px;
     display: block;
-    background-color: #49fae9;
+    transition: all 0.4s ease-in-out;
+    text-align: center;
 }
 
 #newsy a:hover{
     text-decoration: none;
-    color: black;
+    color: white !important;
+    background-color: #002da0;
+    border-radius: 5px;
 }
 
 #newsy a:visited{
@@ -99,16 +115,15 @@ html {
     display: block;
     margin-bottom: 5px;
     text-align: center;
-    transition: all 0.5s ease-in-out;
 }
 
-#lewo img{
-    display: none;
-    margin-left: auto;
-    margin-right: auto;
-}
+/*#lewo img{*/
+/*    display: none;*/
+/*    margin-left: auto;*/
+/*    margin-right: auto;*/
+/*}*/
 
-#menu a:hover{
+#lewo a:hover{
     color: white;
     background: #888;
 }
@@ -128,12 +143,6 @@ html {
     margin-bottom: 20px;
 }
 
-#menu a{
-    text-decoration: none;
-    margin-bottom: 4px;
-
-}
-
 table, tr, td{
     border: 2px solid black;
     border-collapse: collapse;
@@ -148,7 +157,7 @@ table, tr, td{
     width: 146px;
     padding: 0;
     margin-bottom: 4px;
-    transition: 1s;
+    transition: all 1s ease-in-out;
 }
 
 input[type="submit"]:hover {
@@ -190,39 +199,16 @@ input:invalid {
     margin: 0 1px;
 }
 
-/*@media only screen and (max-width: 600px){*/
-/*    #lewo {*/
-/*        width: 100%;*/
-/*        padding: 0;*/
-/*    }*/
+thead {
+    text-align: center;
+}
 
-/*    #tresc {*/
-/*        margin-left: 0;*/
-/*        clear: both;*/
-/*    }*/
-
-/*    #newsy{*/
-/*        text-align: center;*/
-/*        width: 100%;*/
-/*    }*/
-
-/*    #kontener {*/
-/*        min-width: 400px;*/
-/*    }*/
-/*}*/
-
-/*@media only screen and (max-width: 480px){*/
-/*    #lewo img{*/
-/*        display: block;*/
-/*        margin-left: auto;*/
-/*        margin-right: auto;*/
-/*    }*/
-
-/*    #toggle:checked ~ #menu{*/
-/*        display: block;*/
-/*    }*/
-
-/*    #menu{*/
-/*        display: none;*/
-/*    }*/
-/*}*/
+.fieldHelper{
+    display: block;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    transition: all 0.4s ease-in-out;
+    text-decoration: underline;
+    cursor: pointer;
+}
