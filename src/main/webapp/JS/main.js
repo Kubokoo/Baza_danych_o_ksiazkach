@@ -1,7 +1,35 @@
+// function formatISBN(fieldID){ //TODO przenieść do backend i wstawiać myślniki po przysłaniu
+//     var element = document.getElementById(fieldID);
+//     var value = element.value;
+//     switch (value.length) {
+//         case 3:
+//             // value+="-";
+//             element.value+="-";
+//             break;
+//
+//         default:
+//             break;
+//     }
+// }
+
+// function validateISBN(fieldID){ //TODO Przenieść do backend
+//     var field = document.getElementById(fieldID);
+//     if (field.value.length == 10){
+//         var res = 0;
+//         for(var i = 0; i < field.value.length; i++){
+//             res += field.value[i] * i + 1;
+//         }
+//         res = res % 11;
+//     }
+//     else if(field.value.length == 13) {
+//
+//     }
+// }
+
 function getSugestions(fieldID) {
     if(!fieldID) return;
     else {
-        field = document.getElementById(fieldID);
+        var field = document.getElementById(fieldID);
         if (field.value.length < 3){
             var element = document.getElementById(fieldID+"_Result").childNodes;
             var elementLength = element.length;

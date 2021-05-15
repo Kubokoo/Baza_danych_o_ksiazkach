@@ -1,4 +1,4 @@
-package com.JGSS.Projekt;
+package com.JGSS.Projekt.Classes;
 
 import javax.servlet.ServletContext;
 import java.io.BufferedReader;

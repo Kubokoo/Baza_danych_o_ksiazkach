@@ -15,32 +15,33 @@
     if (pageString == null) pageString = "main";
 %>
 <body>
-<jsp:useBean id="user" class="com.JGSS.Projekt.User" scope="session"/>
-<div id="kontener">
-    <div id="header">
-        <jsp:include page="/WEB-INF/View/header.jsp"/>
-    </div>
-    <div id="left">
-        <div id="menu">
-            <jsp:include page="/WEB-INF/View/menu.jsp" />
+    <jsp:useBean id="user" class="com.JGSS.Projekt.Classes.User" scope="session"/>
+    <div id="container">
+        <div id="header">
+            <jsp:include page="/WEB-INF/View/header.jsp"/>
         </div>
-        <div id="newsy">
-            <ul>
-                <li><a href="index.jsp?page=browse">Zarządzaj swoimi książkami</a></li>
-                <li><a href="index.jsp?page=admin">Zarządzaj użytkownikami</a></li>
-            </ul>
+        <div id="left">
+            <div id="menu">
+                <jsp:include page="/WEB-INF/View/menu.jsp" />
+            </div>
+            <div id="newsy">
+                <ul> <%-- Pokazywane w zależności od uprawnień --%>
+                    <li><a href="index.jsp?page=browseBooks">Zarządzaj swoimi książkami</a></li>
+                    <li><a href="index.jsp?page=admin">Administracja</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="srodek">
+            <div id="tresc">
+                <%-- Filtrowanie w zależności od uprawnień --%>
+                <jsp:include page="/WEB-INF/View/content.jsp">
+                    <jsp:param name="web_page" value="<%=pageString%>"/>
+                </jsp:include>
+            </div>
+        </div>
+        <div id="footer">
+            <jsp:include page="/WEB-INF/View/footer.jsp" />
         </div>
     </div>
-    <div id="srodek">
-        <div id="tresc">
-            <jsp:include page="/WEB-INF/View/content.jsp">
-                <jsp:param name="web_page" value="<%=pageString%>"/>
-            </jsp:include>
-        </div>
-    </div>
-    <div id="stopka">
-        <jsp:include page="/WEB-INF/View/footer.jsp" />
-    </div>
-</div>
 </body>
 </html>

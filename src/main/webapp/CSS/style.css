@@ -8,7 +8,7 @@ html {
     height: 100%;
 }
 
-#kontener{
+#container{
     width: 90%;
     font-family: "Tahoma", "sans-serif";
     font-size: 11pt;
@@ -28,36 +28,14 @@ html {
     color: inherit;
 }
 
-#naglowek{
-    width: 100%;
-    background: #ccc;
-    font-size: 200%;
-    height: 150px;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-#naglowek h1 {
-    margin: 0;
-    padding-top: 35px;
-}
-
 #left{
     float: left;
     width: 150px;
     margin-bottom: 10px;
 }
 
-#stopka {
-    color: white;
-    padding: 3pt;
-    text-align: center;
-    background-color: #888;
-    margin-top: 10px;
-}
-
 #tresc {
-    /*background-color: #ffffff;*/
+    background-color: rgba(255, 255, 255, 0.2);
     padding: 5pt;
     text-align: justify;
     margin-left: 160px;
@@ -77,11 +55,14 @@ html {
 
 #newsy a{
     text-decoration: underline;
+    font-weight: bold;
     color: black;
-    margin-bottom: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
     display: block;
     transition: all 0.4s ease-in-out;
     text-align: center;
+    background-color: lightgreen;
 }
 
 #newsy a:hover{
@@ -114,27 +95,26 @@ html {
     text-align: center;
     display: block;
     margin-bottom: 5px;
-    text-align: center;
 }
-
-/*#lewo img{*/
-/*    display: none;*/
-/*    margin-left: auto;*/
-/*    margin-right: auto;*/
-/*}*/
 
 #lewo a:hover{
     color: white;
     background: #888;
 }
 
-#stopka{
+#footer{
     clear: both;
     color: white;
-    padding: 2pt;
     text-align: center;
     background: #888;
     margin-top: 10px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    padding: 3pt;
+}
+
+#footer h4{
+    margin: 2px;
 }
 
 #menu{
@@ -149,24 +129,34 @@ table, tr, td{
     background-color: white;
 }
 
-#toggle{
-    display: none;
+thead {
+    text-align: center;
+    font-weight: bold;
+}
+
+td{
+    padding: 3px;
 }
 
 #menu input{
     width: 146px;
-    padding: 0;
+    padding-bottom: 5px;
     margin-bottom: 4px;
-    transition: all 1s ease-in-out;
 }
 
-input[type="submit"]:hover {
-    background-color: #49fae9;
-    color: #002da0;
+input[type="submit"], .deleteButton{
+    background-color: lightgreen;
+    font-weight: bold;
+    transition: all 0.4s ease-in-out;
+}
+
+input[type="submit"]:hover, .deleteButton:hover {
+    background-color: #002da0;
+    color: white;
     text-decoration: underline;
 }
 
-#komunikat {
+#message {
     width: 50%;
     margin: 0 auto;
     border: 1px solid black;
@@ -179,7 +169,7 @@ input:invalid {
 }
 
 #loginForm{
-    width: 351px;
+    width: 365px;
     float: right;
 }
 
@@ -195,12 +185,8 @@ input:invalid {
     width: 100%;
 }
 
-#stopka h4 {
+#footer h4 {
     margin: 0 1px;
-}
-
-thead {
-    text-align: center;
 }
 
 .fieldHelper{
@@ -211,4 +197,17 @@ thead {
     transition: all 0.4s ease-in-out;
     text-decoration: underline;
     cursor: pointer;
+}
+
+a {
+    color: black;
+}
+
+a:visited{
+    color: black;
+}
+
+.icon{
+    width: 25px;
+    vertical-align: bottom;
 }

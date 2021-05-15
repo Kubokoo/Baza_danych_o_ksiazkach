@@ -1,9 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <form method="get" action="index.jsp?page=searchResult">
-    Numer IBAN: <input type="text" name="IBAN" id="IBAN" minlength="10" maxlength="13" onkeyup="getSugestions('IBAN')"/>
-    <div id="IBAN_Result"></div>
-    Nazwa: <input type="text" name="Name" id="Name" onkeyup="getSugestions('Name')">
-    <div id="Name_Result"></div>
+    Numer ISBN: <input type="text" placeholder="000-00-0000-000-0" pattern="(?:(?=.{17}$)97[89][ -](?:[0-9]+[ -]){2}[0-9]+[ -][0-9]|97[89][0-9]{10}|(?=.{13}$)(?:[0-9]+[ -]){2}[0-9]+[ -][0-9Xx]|[0-9]{9}[0-9Xx])" name="IBAN" id="IBAN" minlength="14" maxlength="17" onkeyup="getSugestions('ISBN');">
+    <div id="ISBN_Result"></div>
+    Nazwa: <input type="text" name="Title" id="Title" onkeyup="getSugestions('Title')">
+    <div id="Title_Result"></div>
     Data wydania: <input type="date" name="Release date" id="Release_Date">
     Autor: <input type="text" name="Author" id="Author" onkeyup="getSugestions('Author')">
     <div id="Author_Result"></div>
