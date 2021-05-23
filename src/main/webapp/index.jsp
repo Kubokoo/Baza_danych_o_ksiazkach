@@ -1,4 +1,6 @@
+<%@ page import="com.JGSS.Projekt.Classes.User" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
+<jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,9 +15,12 @@
     String pageString = request.getParameter("page");
     if (request.getParameter("IBAN") != null) pageString = "searchResult";
     if (pageString == null) pageString = "main";
+
+    if(loggedUser == null){
+        session.setAttribute("loggedUser", new User(-1,"","",-1));
+    }
 %>
 <body>
-    <jsp:useBean id="user" class="com.JGSS.Projekt.Classes.User" scope="session"/>
     <div id="container">
         <div id="header">
             <jsp:include page="/WEB-INF/View/header.jsp"/>

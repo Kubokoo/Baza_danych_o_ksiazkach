@@ -28,7 +28,7 @@
     </tbody>
 </table>
 
-<jsp:useBean id="user" class="com.JGSS.Projekt.Classes.User" scope="session"/>
+<jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
 <h3>Zarządzanie użytkownikami: <a href="index.jsp?page=admin&action=addUser"><img class="icon" src="Img/Add.png">Dodaj
     nowego
     użytkownika</a></h3>
