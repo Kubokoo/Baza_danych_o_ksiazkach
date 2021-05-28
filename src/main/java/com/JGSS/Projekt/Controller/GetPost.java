@@ -18,7 +18,6 @@ import com.JGSS.Projekt.Classes.Book;
 public class GetPost extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        response.setContentType("aplication/json; charset=utf-8");
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
@@ -29,21 +28,20 @@ public class GetPost extends HttpServlet {
         if (action == null) action = "";
 
         if (action.equals("login")){
-            SQL sql = new SQL();
-
             String login = request.getParameter("Login");
             String password = request.getParameter("Password");
 
-            if (login == null) login = "";
-            if (password == null) password = "";
-
-            User user = new User();
-            user.loginUser(login, password);
-            if(user != null){
-                session.setAttribute("loggedUser", user);
-            }
+            if(login == null || password == null)
+                session.setAttribute("loggedUser", null);
             else{
-                session.setAttribute("loggedUser", new User(-1,"","",-1));
+                User user = new User();
+                user.loginUser(login, password);
+                if(user != null){
+                    session.setAttribute("loggedUser", user);
+                }
+                else{
+                    session.setAttribute("loggedUser", new User(-1));
+                }
             }
             response.sendRedirect(request.getContextPath() + "/index.jsp?page=login&action=login");
         }

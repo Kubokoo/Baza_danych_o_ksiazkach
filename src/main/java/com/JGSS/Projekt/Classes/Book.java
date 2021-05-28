@@ -8,7 +8,7 @@ public class Book {
     private Date release_Date;
     private String author;
     private String publishing_House;
-    private Integer owner;
+    private Integer ownerID;
 
     public Book(String ISBN, String title, Date release_Date, String author, String publishing_House, Integer owner) {
         this.ISBN = ISBN;
@@ -16,7 +16,7 @@ public class Book {
         this.release_Date = release_Date;
         this.author = author;
         this.publishing_House = publishing_House;
-        this.owner = owner;
+        this.ownerID = owner;
     }
 
     public Book(){
@@ -31,12 +31,12 @@ public class Book {
         this.publishing_House = publishing_House;
     }
 
-    public Integer getOwner() {
-        return owner;
+    public Integer getOwnerID() {
+        return ownerID;
     }
 
-    public void setOwner(Integer owner) {
-        this.owner = owner;
+    public void setOwnerID(Integer ownerID) {
+        this.ownerID = ownerID;
     }
 
     public String getISBN() {

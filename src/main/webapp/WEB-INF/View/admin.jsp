@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
-
 <jsp:useBean id="book" class="com.JGSS.Projekt.Classes.Book" scope="page"/>
 <h3>Zarządzanie książkami: <a href="index.jsp?page=admin&action=addBook"><img class="icon" src="Img/Add.png">Dodaj nową kiążkę</a></h3>
 <table>

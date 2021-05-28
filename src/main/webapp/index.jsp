@@ -1,6 +1,9 @@
 <%@ page import="com.JGSS.Projekt.Classes.User" %>
+<%@ page import="com.JGSS.Projekt.Controller.SQL" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
+<jsp:useBean id="usersDB" class="com.JGSS.Projekt.Controller.SQL" scope="application"/>
+<jsp:useBean id="booksDB" class="com.JGSS.Projekt.Controller.SQL" scope="application"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,30 +15,29 @@
     <script type="text/javascript" src="JS/main.js"></script>
 </head>
 <%
+    if(loggedUser == null){
+        loggedUser = new User(-1);
+        session.setAttribute("loggedUser", loggedUser);
+    }
+
+    if(usersDB.getConn() == null){
+        SQL sql = new SQL("usersDB.db");
+        application.setAttribute("usersDB", sql);
+    }
+
+    if(booksDB.getConn() == null){
+        SQL sql = new SQL("booksDB.db");
+        application.setAttribute("booksDB", sql);
+    }
+
     String pageString = request.getParameter("page");
     if (request.getParameter("IBAN") != null) pageString = "searchResult";
     if (pageString == null) pageString = "main";
-
-    if(loggedUser == null){
-        session.setAttribute("loggedUser", new User(-1,"","",-1));
-    }
 %>
 <body>
     <div id="container">
-        <div id="header">
-            <jsp:include page="/WEB-INF/View/header.jsp"/>
-        </div>
-        <div id="left">
-            <div id="menu">
-                <jsp:include page="/WEB-INF/View/menu.jsp" />
-            </div>
-            <div id="newsy">
-                <ul> <%-- Pokazywane w zależności od uprawnień --%>
-                    <li><a href="index.jsp?page=browseBooks">Zarządzaj swoimi książkami</a></li>
-                    <li><a href="index.jsp?page=admin">Administracja</a></li>
-                </ul>
-            </div>
-        </div>
+        <jsp:include page="/WEB-INF/View/header.jsp"/>
+        <jsp:include page="/WEB-INF/View/menu.jsp" />
         <div id="srodek">
             <div id="tresc">
                 <%-- Filtrowanie w zależności od uprawnień --%>
