@@ -26,6 +26,27 @@
 //     }
 // }
 
+function changeUser(id){
+    var content = JSON.parse('{"Id": "", "Username": "","Password": "", "Permissions": "", "FirstName": "","LastName": ""}');
+
+    var tr = id.parentElement.parentElement;
+
+    var properties = [];
+    for(var i = 0; i < tr.childElementCount - 1; i++){
+        properties[i] = tr.children[i].children[0].value;
+    }
+
+    var i = 0;
+    for (var key in content) {
+        if (content.hasOwnProperty(key)) {
+            content[key] = properties[i];
+            i++;
+        }
+    }
+
+    sendAsync("JSON?page=profile&action=editUser",null, "POST", JSON.stringify(content), "application/json", null);
+}
+
 function getSugestions(fieldID) {
     if(!fieldID) return;
     else {
@@ -36,13 +57,12 @@ function getSugestions(fieldID) {
             for (var i = 0; i < elementLength; i++){
                 element[0].remove();
             }
-            // element[0].style.display = "none";
 
             return;
         }
         else if(field.value.length >= 3){
             var fieldResult = document.getElementById(fieldID+"_Result");
-            var result = "<div class='fieldHelper' onclick='setSugestion(\"" + fieldID + "\", \"Ładuję dane...\")'>" + "Ładuję dane..." + "</div>"; // odpowiedz.sugestia[i]
+            var result = "<div class='fieldHelper' onclick='setSugestion(\"" + fieldID + "\", \"Ładuję dane...\")'>" + "Ładuję dane..." + "</div>";
 
             fieldResult.innerHTML = result;
         }
@@ -54,10 +74,11 @@ function setSugestion(fieldID, data){
     field.value = data;
 }
 
-function wyslijAsynchronicznie (url, funkcjeZwrotne, metoda, wysylaneDane, typDanych){
-    metoda = metoda || "GET";
-    wysylaneDane = wysylaneDane || null;
-    typDanych = typDanych || "text/plain";
+function sendAsync (url, callback, method, data, dataType, elementId){
+    method = method || "GET";
+    data = data || null;
+    dataType = dataType || "text/plain";
+    elementId = elementId || null;
 
     if(!window.XMLHttpRequest){
         return null;
@@ -65,51 +86,26 @@ function wyslijAsynchronicznie (url, funkcjeZwrotne, metoda, wysylaneDane, typDa
 
     var requester = new XMLHttpRequest();
 
-    requester.open(metoda, url);
-    requester.setRequestHeader("Content-Type", typDanych);
+    requester.open(method, url);
+    requester.setRequestHeader("Content-Type", dataType);
 
     requester.onreadystatechange = function () {
-        el = document.getElementById("wyniki");
-        el.style.display = "block";
-        el.innerHTML = "Ładuję dane...";
+        if(elementId){
+            el = document.getElementById(elementId);
+            el.style.display = "block";
+            el.innerHTML = "Ładuję dane...";
+        }
 
         if (requester.readyState === 4){
             if (requester.status === 200){
-                funkcjeZwrotne.success(requester);
+                callback.success(requester);
             }
             else {
-                funkcjeZwrotne.falure(requester);
+                callback.falure(requester);
             }
         }
     }
 
-    requester.send(wysylaneDane);
+    requester.send(data);
     return requester;
-}
-
-function pobierzSugestie() {
-    var wartosc = {wartosc: document.getElementById("pole").value};
-    if (wartosc.wartosc.length == 0){
-        var elementy = document.getElementsByClassName("lista");
-        var elementyLength = elementy.length;
-        for (var i = 0; i < elementyLength; i++){
-            elementy[0].remove();
-        }
-        return;
-    }
-    var wynik = {
-        success: function (requester) {
-            var rezultat = "";
-            var odpowiedz = JSON.parse(requester.responseText);
-            for(var i = 0; i < odpowiedz.sugestia.length; i++){
-                rezultat += "<div class='lista'>" + odpowiedz.sugestia[i] + "</div>";
-            }
-            field.innerHTML = rezultat;
-        },
-        falure: function (requester){
-            alert("Wystąpił błąd: " + requester.status);
-        }
-    }
-    var typDanych = 'application/json';
-    wyslijAsynchronicznie("sugestieJSON", wynik, "POST", JSON.stringify(wartosc), typDanych);
 }

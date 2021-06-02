@@ -102,10 +102,10 @@ public class User {
             this.permissions = sqlUser.permissions;
         }
 
-        try {
-            sql.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+//        try {
+//            sql.close();
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
     }
 }

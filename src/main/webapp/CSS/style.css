@@ -216,3 +216,7 @@ a:visited{
     width: 25px;
     vertical-align: bottom;
 }
+
+#tresc table input{
+    width: 90%;
+}

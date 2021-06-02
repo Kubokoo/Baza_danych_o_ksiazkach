@@ -7,6 +7,7 @@ import org.json.simple.parser.JSONParser;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -46,8 +47,28 @@ public class GetPost extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/index.jsp?page=login&action=login");
         }
 
-//        out.println(json);
-//        out.close();
+        else if(action.equals("editUser")){
+            String returnPage = "" + request.getParameter("page");
+
+            Map<String, String[]> parameters = request.getParameterMap();
+            for(String parameter : parameters.keySet()) {
+                if(parameter.toLowerCase().startsWith("question")) {
+                    String[] values = parameters.get("" + parameter);
+                }
+            }
+
+            User user = new User();
+//            user.loginUser(login, password);
+            if(user != null){
+                session.setAttribute("loggedUser", user);
+            }
+            else{
+                session.setAttribute("loggedUser", new User(-1));
+            }
+
+            response.sendRedirect(request.getContextPath() + "/index.jsp?page="
+                    + returnPage);
+        }
     }
 
     @Override

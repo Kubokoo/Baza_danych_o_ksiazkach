@@ -8,38 +8,35 @@
 <h3>Zarządzanie profilem:</h3>
 <table>
     <thead>
-        <tr>
+    <tr>
         <%
             usersDB = (SQL) application.getAttribute("usersDB");
             columns = usersDB.columnsLabels();
             for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
         %>
-            <td><%=columns.get(i.getI())%></td>
+        <td><%=columns.get(i.getI())%></td>
         <% } %>
-            <td>Akcje</td>
-        </tr>
+        <td>Akcje</td>
+    </tr>
 
     </thead>
     <tbody id="tableUsersBody">
     <tr id="userID_${sessionScope.loggedUser.id}">
-        <form method="post" action="index.jsp?page=profile&id=${sessionScope.loggedUser.id}&action=editUser">
-            <%
-                columns = usersDB.getCurrUser(loggedUser.getLogin());
-                for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
-            %>
-            <td><%=columns.get(i.getI())%></td>
-            <% } %>
-            <td>
-                <label for="changeUser_${sessionScope.loggedUser.id}"><img class="icon" src="Img/Pencil.png"></label>
-                <input type="submit" id="changeUser_${sessionScope.loggedUser.id}" value="Zmień">
-        </form>
-        <a href="index.jsp?page=profile&id=${sessionScope.loggedUser.id}&action=deleteUser">
-            <img class="icon" src="Img/Trashcan.png"><button class="deleteButton">Usuń</button>
-        </a>
+        <%
+            columns = usersDB.getCurrUser(loggedUser.getLogin());
+            for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
+        %>
+        <td><input type="text" value="<%=columns.get(i.getI())%>"></td>
+        <% } %>
+        <td>
+            <label for="changeUser_${sessionScope.loggedUser.id}"><img class="icon" src="Img/Pencil.png"></label>
+            <button id="changeUser_${sessionScope.loggedUser.id}" class="deleteButton" onclick="changeUser(changeUser_${sessionScope.loggedUser.id})">
+                Zmień
+            </button>
+            <a href="GetPost?page=profile&id=${sessionScope.loggedUser.id}&action=deleteUser">
+                <img class="icon" src="Img/Trashcan.png"><button class="deleteButton">Usuń</button>
+            </a>
         </td>
-
     </tr>
     </tbody>
 </table>
-
-

@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SQL {
+public class SQL{
     public static final String DRIVER = "org.sqlite.JDBC";
     public static final String DB_URL = "jdbc:sqlite:";
 
     private Connection conn;
-    private Statement stat;
+    private PreparedStatement stat;
 
     public Connection getConn() {
         return conn;
@@ -40,29 +40,23 @@ public class SQL {
             fullPath = fullPath.replace("/WEB-INF/classes/", "");
             fullPath += "/DB/" + DBName;
             conn = DriverManager.getConnection(DB_URL+fullPath);
-            stat = conn.createStatement();
         } catch (SQLException | UnsupportedEncodingException e) {
             System.err.println("Connection problem or wrong DB name.");
             e.printStackTrace();
         }
     }
 
-    @Override
-    protected void finalize() throws SQLException {
-        stat.close();
-        conn.close();
-    }
-
-    public void close() throws SQLException {
-        stat.close();
-        conn.close();
-    }
+//    @Override
+//    protected void finalize() throws SQLException {
+//        stat.close();
+//        conn.close();
+//    }
 
     public List<User> getUsers(String filer){
         List<User> users = new LinkedList<User>();
 
         try {
-            ResultSet result = stat.executeQuery("SELECT * FROM users" + filer);
+            ResultSet result = stat.executeQuery("qSELECT * FROM users" + filer + ";");
             int idDB, premissionsDB;
             String userDB, passwordDB, firstName, lastName;
             while(result.next()) {
@@ -85,8 +79,12 @@ public class SQL {
     public User confirmLogin(String login, String password){
         User user = new User(-1);
         try {
+            String SQLQuery = "SELECT * FROM 'Users' WHERE Username = ? AND Password = ?";
+            stat = conn.prepareStatement(SQLQuery);
+            stat.setString(1, login);
+            stat.setString(2, password);
             ResultSet result =
-                    stat.executeQuery("SELECT * FROM 'Users' WHERE Username ='" + login + "' AND Password ='" + password + "'");
+                    stat.executeQuery();
             int idDB, premissionsDB;
             String userDB, firstName, lastName;
             while(result.next()) {
@@ -107,10 +105,11 @@ public class SQL {
     public LinkedList<String> getCurrUser(String login){
         LinkedList<String> user = new LinkedList<>();
         try {
+            String SQLQuery = "SELECT * FROM 'Users' WHERE Username = ? ;";
+            stat = conn.prepareStatement(SQLQuery);
+            stat.setString(1, login);
             ResultSet result =
-                    stat.executeQuery("SELECT * FROM 'Users' WHERE Username ='" + login + "'");
-            int idDB, premissionsDB;
-            String userDB, firstName, lastName;
+                    stat.executeQuery();
             while(result.next()) {
                 user.add(result.getString("Id"));
                 user.add(result.getString("Username"));
@@ -127,12 +126,70 @@ public class SQL {
         return user;
     }
 
+    public boolean editUser(int id, String userName, String password,
+                            int permisions, String firstName, String lastName){
+        int result;
+        if(password == "^^^^^"){
+            String SQLQuery = "UPDATE Users\n" +
+                    "SET Username    = ?,\n" +
+                    "    Password    = ?,\n" +
+                    "    Permissions = ?,\n" +
+                    "    FirstName   = ?,\n" +
+                    "    LastName    = ?\n" +
+                    "WHERE Id = ?;";
+            try {
+                stat = conn.prepareStatement(SQLQuery);
+                stat.setString(1, userName);
+                stat.setString(2, password);
+                stat.setInt(3, permisions);
+                stat.setString(4, firstName);
+                stat.setString(5, lastName);
+                stat.setInt(6, id);
+                result =
+                        stat.executeUpdate();
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
+            return true;
+        }
+        else {
+            String SQLQuery = "UPDATE Users\n" +
+                    "SET Username    = ?,\n" +
+                    "    Permissions = ?,\n" +
+                    "    FirstName   = ?,\n" +
+                    "    LastName    = ?\n" +
+                    "WHERE Id = ?;";
+            try {
+                stat = conn.prepareStatement(SQLQuery);
+                stat.setString(1, userName);
+                stat.setInt(2, permisions);
+                stat.setString(3, firstName);
+                stat.setString(4, lastName);
+                stat.setInt(5, id);
+                result =
+                        stat.executeUpdate();
+                stat.close();
+                conn.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+
+            return true;
+        }
+    }
+
     public LinkedList<String> columnsLabels(){
         LinkedList<String> columns = new LinkedList<>();
 
         try {
+//            String SQLQuery = ;
+//            stat = conn.prepareStatement(SQLQuery);
+            String SQLQuery = "SELECT * FROM 'Users' WHERE 0=1";
+            stat = conn.prepareStatement(SQLQuery);
             ResultSet result =
-                    stat.executeQuery("SELECT * FROM 'Users' WHERE 0=1");
+                    stat.executeQuery();
             ResultSetMetaData rsmd = result.getMetaData();
             for(int i = 1; i <= rsmd.getColumnCount(); i++){
                 columns.add(rsmd.getColumnName(i));
@@ -143,5 +200,11 @@ public class SQL {
         }
 
         return columns;
+    }
+
+    private String sanitazeInput(String input){
+
+
+        return input;
     }
 }

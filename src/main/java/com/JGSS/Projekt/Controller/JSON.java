@@ -21,6 +21,8 @@ public class JSON extends HttpServlet {
 
         HttpSession session = request.getSession();
         ServletContext appContext = getServletContext();
+        String action = request.getParameter("action");
+        if (action == null) action = "";
 
         BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
         String jsonText = "";
@@ -30,6 +32,7 @@ public class JSON extends HttpServlet {
 
         JSONObject json = new JSONObject();
         JSONParser jsonParser = new JSONParser();
+        PrintWriter out = response.getWriter();
 
         if((jsonText != null) & !(jsonText.isEmpty())){
             try {
@@ -41,16 +44,29 @@ public class JSON extends HttpServlet {
             }
         }
 
-        String query = (String) json.get("wartosc");
+        if(action.equals("editUser")){
+            int id = Integer.parseInt((String) json.get("Id"));
+            String username = (String) json.get("Username");
+            String password = (String) json.get("Password");
+            int permissions = Integer.parseInt((String) json.get("Permissions"));
+            String firstName = (String) json.get("FirstName");
+            String lastName = (String) json.get("LastName");
+
+            SQL sql = new SQL("usersDB.db");
+            boolean result = sql.editUser(id, username, password, permissions, firstName, lastName);
+            out.write("Test1234");
+
+        }
+        else if(action.equals("sugestions")){
+            String query = (String) json.get("wartosc");
 //        query = query.toUpperCase();
 
-        PrintWriter out = response.getWriter();
-        String data = "";
+            String data = "";
 
-        String akcja = request.getParameter("akcja");
-        if (akcja == null) akcja = "";
+            String akcja = request.getParameter("akcja");
+            if (akcja == null) akcja = "";
 
-        if (akcja.equals("zaloguj"))
+            if (akcja.equals("zaloguj"))
 
 //        ArrayList<String> sugestie = new ArrayList<>();
 //        for (String samochod: lista){
@@ -59,11 +75,14 @@ public class JSON extends HttpServlet {
 //            }
 //        }
 
-            json.put("data", data);
+                json.put("data", data);
 
 //        out.println(json);
-        out.close();
 
+
+        }
+
+        out.close();
     }
 
     @Override
