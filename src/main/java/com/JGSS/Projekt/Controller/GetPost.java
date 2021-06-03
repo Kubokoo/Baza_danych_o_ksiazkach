@@ -25,6 +25,8 @@ public class GetPost extends HttpServlet {
         HttpSession session = request.getSession();
         ServletContext appContext = getServletContext();
 
+        SQL usersdb = (SQL) appContext.getAttribute("usersDB");
+
         String action = request.getParameter("action");
         if (action == null) action = "";
 
@@ -35,8 +37,8 @@ public class GetPost extends HttpServlet {
             if(login == null || password == null)
                 session.setAttribute("loggedUser", null);
             else{
-                User user = new User();
-                user.loginUser(login, password);
+                User user = new User(-1);
+                user.loginUser(login, password, usersdb);
                 if(user != null){
                     session.setAttribute("loggedUser", user);
                 }
@@ -47,27 +49,11 @@ public class GetPost extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/index.jsp?page=login&action=login");
         }
 
-        else if(action.equals("editUser")){
-            String returnPage = "" + request.getParameter("page");
+        if (action.equals("logout")){
+            User user = new User(-1);
+            session.setAttribute("loggedUser", user);
 
-            Map<String, String[]> parameters = request.getParameterMap();
-            for(String parameter : parameters.keySet()) {
-                if(parameter.toLowerCase().startsWith("question")) {
-                    String[] values = parameters.get("" + parameter);
-                }
-            }
-
-            User user = new User();
-//            user.loginUser(login, password);
-            if(user != null){
-                session.setAttribute("loggedUser", user);
-            }
-            else{
-                session.setAttribute("loggedUser", new User(-1));
-            }
-
-            response.sendRedirect(request.getContextPath() + "/index.jsp?page="
-                    + returnPage);
+            response.sendRedirect(request.getContextPath() + "/index.jsp?page=logout&action=logout");
         }
     }
 

@@ -7,7 +7,6 @@ import java.net.URLDecoder;
 import java.sql.*;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +16,7 @@ public class SQL{
 
     private Connection conn;
     private PreparedStatement stat;
+    private ResultSet result;
 
     public Connection getConn() {
         return conn;
@@ -53,20 +53,20 @@ public class SQL{
 //    }
 
     public List<User> getUsers(String filer){
-        List<User> users = new LinkedList<User>();
+        List<User> users = new LinkedList<>();
 
         try {
-            ResultSet result = stat.executeQuery("qSELECT * FROM users" + filer + ";");
-            int idDB, premissionsDB;
+            ResultSet result = stat.executeQuery("SELECT * FROM 'users'" + filer + ";");
+            int idDB, permissionsDB;
             String userDB, passwordDB, firstName, lastName;
             while(result.next()) {
                 idDB = result.getInt("Id");
                 userDB = result.getString("Username");
                 passwordDB = result.getString("Password");
-                premissionsDB = result.getInt("Permissions");
+                permissionsDB = result.getInt("Permissions");
                 firstName = result.getString("FirsName");
                 lastName = result.getString("LastName");
-                users.add(new User(idDB, userDB, passwordDB, premissionsDB, firstName, lastName));
+                users.add(new User(idDB, userDB, passwordDB, permissionsDB, firstName, lastName));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,19 +85,25 @@ public class SQL{
             stat.setString(2, password);
             ResultSet result =
                     stat.executeQuery();
-            int idDB, premissionsDB;
+            int idDB, permissionsDB;
             String userDB, firstName, lastName;
             while(result.next()) {
                 idDB = result.getInt("Id");
                 userDB = result.getString("Username");
-                premissionsDB = result.getInt("Permissions");
+                permissionsDB = result.getInt("Permissions");
                 firstName = result.getString("FirstName");
                 lastName = result.getString("LastName");
-                user = new User(idDB, userDB, premissionsDB, firstName, lastName);
+                user = new User(idDB, userDB, permissionsDB, firstName, lastName);
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return user;
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
 
         return user;
@@ -121,6 +127,12 @@ public class SQL{
         } catch (SQLException e) {
             e.printStackTrace();
             return user;
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
 
         return user;
@@ -128,8 +140,8 @@ public class SQL{
 
     public boolean editUser(int id, String userName, String password,
                             int permisions, String firstName, String lastName){
-        int result;
-        if(password == "^^^^^"){
+        int resultInt = 0;
+        if(password != null && !password.equals("")){
             String SQLQuery = "UPDATE Users\n" +
                     "SET Username    = ?,\n" +
                     "    Password    = ?,\n" +
@@ -145,14 +157,18 @@ public class SQL{
                 stat.setString(4, firstName);
                 stat.setString(5, lastName);
                 stat.setInt(6, id);
-                result =
+                resultInt =
                         stat.executeUpdate();
                 stat.close();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
+            } finally {
+                try {
+                    stat.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
             }
-
-            return true;
         }
         else {
             String SQLQuery = "UPDATE Users\n" +
@@ -168,27 +184,56 @@ public class SQL{
                 stat.setString(3, firstName);
                 stat.setString(4, lastName);
                 stat.setInt(5, id);
-                result =
+                resultInt =
                         stat.executeUpdate();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return false;
+            }
+            finally {
+                try {
+                    stat.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+
+        return resultInt == 1;
+    }
+
+    public boolean deleteUser(int id){
+        boolean result = false;
+        String SQLQuery = "DELETE FROM Users\n" +
+                "WHERE Id = ?;";
+        try {
+            stat = conn.prepareStatement(SQLQuery);
+            stat.setInt(1, id);
+            result =
+                    stat.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+        finally {
+            try {
                 stat.close();
-                conn.close();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-
-            return true;
         }
+
+
+        return result;
     }
 
     public LinkedList<String> columnsLabels(){
         LinkedList<String> columns = new LinkedList<>();
 
         try {
-//            String SQLQuery = ;
-//            stat = conn.prepareStatement(SQLQuery);
             String SQLQuery = "SELECT * FROM 'Users' WHERE 0=1";
             stat = conn.prepareStatement(SQLQuery);
-            ResultSet result =
+            result =
                     stat.executeQuery();
             ResultSetMetaData rsmd = result.getMetaData();
             for(int i = 1; i <= rsmd.getColumnCount(); i++){
@@ -197,6 +242,14 @@ public class SQL{
         } catch (SQLException e) {
             e.printStackTrace();
             return columns;
+        }
+        finally {
+            try {
+                result.close();
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
 
         return columns;

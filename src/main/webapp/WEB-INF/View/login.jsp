@@ -6,6 +6,4 @@
         <h3>Zostałeś zalogowany jako ${sessionScope.loggedUser.login} o uprawnieniach ${sessionScope.loggedUser.permissions}.</h3>
 <% } else if(action.equals("login") && loggedUser.getPermissions() == -1) { %>
         <h3>Błąd logowania</h3>
-<% } else if(action.equals("logout")) { %>
-        <h3>Zostałeś pomyślnie wylogowany</h3>
-<%}%>
+<% } %>

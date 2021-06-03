@@ -40,6 +40,7 @@ html {
     text-align: justify;
     margin-left: 160px;
     margin-bottom: 10px;
+    margin-top: 15px;
 }
 
 #newsy{
@@ -219,4 +220,15 @@ a:visited{
 
 #tresc table input{
     width: 90%;
+}
+
+@media only screen and (max-width: 800px) {
+    #tresc table tr {
+        display: grid;
+    }
+
+    .login_outForm {
+        display: grid;
+        width: 100%;
+    }
 }

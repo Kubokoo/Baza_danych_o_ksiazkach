@@ -13,8 +13,11 @@
     <div style="clear:both"></div>
     <% } else { %>
     <h3 style="text-align: right">
-        <a href="index.jsp?page=profile"> (${sessionScope.loggedUser.login})</a>
-        <form class="loginForm" method="post" action="/GetPost?page=login&action=logout"><input type="submit" value="wyloguj"></form>
+        <a href="index.jsp?page=profile">
+            <%=loggedUser.getFirstName()%> (<%=loggedUser.getLogin()%>) <%=loggedUser.getLastName()%>
+        </a>
+        <form class="loginForm" method="post" action="GetPost?page=logout&action=logout">
+            <input type="submit" value="wyloguj"></form>
     </h3>
     <div style="clear:both"></div>
     <% } %>

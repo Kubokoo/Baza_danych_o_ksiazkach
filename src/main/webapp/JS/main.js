@@ -26,6 +26,10 @@
 //     }
 // }
 
+function message(text) {
+    if(text) alert(text);
+}
+
 function changeUser(id){
     var content = JSON.parse('{"Id": "", "Username": "","Password": "", "Permissions": "", "FirstName": "","LastName": ""}');
 
@@ -44,7 +48,13 @@ function changeUser(id){
         }
     }
 
-    sendAsync("JSON?page=profile&action=editUser",null, "POST", JSON.stringify(content), "application/json", null);
+    sendAsync("JSON?page=profile&action=editUser", "POST", JSON.stringify(content), "application/json", null);
+}
+
+function deleteUser(id){
+    var content = JSON.parse('{"Id": "' + id + '"}');
+
+    sendAsync("JSON?page=profile&action=deleteUser", "POST", JSON.stringify(content), "application/json", null);
 }
 
 function getSugestions(fieldID) {
@@ -74,7 +84,7 @@ function setSugestion(fieldID, data){
     field.value = data;
 }
 
-function sendAsync (url, callback, method, data, dataType, elementId){
+function sendAsync (url, method, data, dataType, elementId){
     method = method || "GET";
     data = data || null;
     dataType = dataType || "text/plain";
@@ -98,14 +108,33 @@ function sendAsync (url, callback, method, data, dataType, elementId){
 
         if (requester.readyState === 4){
             if (requester.status === 200){
-                callback.success(requester);
-            }
-            else {
-                callback.falure(requester);
+                message(requester.responseText);
             }
         }
     }
 
     requester.send(data);
     return requester;
+}
+
+window.onload = function changeInputType(){
+    var field = document.getElementById("tableUsersBody");
+
+    if (field != null){
+        var thead = field.children["0"];
+        var trHead = thead.children[0].children;
+
+        var tbody = field.children["1"];
+        var trBody = tbody.children[0].children;
+
+        for (var i = 0; i < trHead.length; i++){
+            if(trHead[i].textContent == "Id"){
+                trBody[i].children[0].disabled = true;
+            }
+            else if(trHead[i].textContent == "Password") {
+                trBody[i].children[0].type = "password";
+                trBody[i].children[0].placeholder = "bez zmiany hasła";
+            }
+        }
+    }
 }

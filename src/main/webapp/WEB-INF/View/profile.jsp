@@ -4,9 +4,9 @@
 <jsp:useBean id="columns" class="java.util.LinkedList" scope="application"/>
 <jsp:useBean id="usersDB" class="com.JGSS.Projekt.Controller.SQL" scope="application"/>
 <jsp:useBean id="booksDB" class="com.JGSS.Projekt.Controller.SQL" scope="application"/>
-<jsp:useBean id="i" class="com.JGSS.Projekt.Classes.Counter" scope="page"/>
+<jsp:useBean id="i" class="com.JGSS.Projekt.Classes.Counter"/>
 <h3>Zarządzanie profilem:</h3>
-<table>
+<table id="tableUsersBody">
     <thead>
     <tr>
         <%
@@ -20,22 +20,31 @@
     </tr>
 
     </thead>
-    <tbody id="tableUsersBody">
+    <tbody>
     <tr id="userID_${sessionScope.loggedUser.id}">
         <%
+            String val;
             columns = usersDB.getCurrUser(loggedUser.getLogin());
             for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
+                val = (String) columns.get(i.getI());
+                if(val == null || val.equals("null") || val.equals("****")) {
+                    val = "";
+                }
         %>
-        <td><input type="text" value="<%=columns.get(i.getI())%>"></td>
+        <td><input type="text" value="<%= val %>"></td>
         <% } %>
         <td>
-            <label for="changeUser_${sessionScope.loggedUser.id}"><img class="icon" src="Img/Pencil.png"></label>
+            <label
+                    for="changeUser_${sessionScope.loggedUser.id}"><img class="icon" alt="edit" src="Img/Pencil.png"></label>
             <button id="changeUser_${sessionScope.loggedUser.id}" class="deleteButton" onclick="changeUser(changeUser_${sessionScope.loggedUser.id})">
                 Zmień
             </button>
-            <a href="GetPost?page=profile&id=${sessionScope.loggedUser.id}&action=deleteUser">
-                <img class="icon" src="Img/Trashcan.png"><button class="deleteButton">Usuń</button>
-            </a>
+            <label for="deleteUser_${sessionScope.loggedUser.id}">
+                <img class="icon" alt="remove" src="Img/Trashcan.png">
+            </label>
+            <button id="deleteUser_${sessionScope.loggedUser.id}" class="deleteButton" onclick="deleteUser(${sessionScope.loggedUser.id})">
+                Usuń
+            </button>
         </td>
     </tr>
     </tbody>

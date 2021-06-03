@@ -1,6 +1,7 @@
 package com.JGSS.Projekt.Classes;
 
 import com.JGSS.Projekt.Controller.SQL;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
@@ -77,7 +78,10 @@ public class User {
     }
 
     public String getFirstName() {
-        return firstName;
+        if(firstName != null)
+            return firstName;
+        else
+            return "";
     }
 
     public void setFirstName(String firstName) {
@@ -85,27 +89,24 @@ public class User {
     }
 
     public String getLastName() {
-        return lastName;
+        if(lastName != null)
+            return lastName;
+        else
+            return "";
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public void loginUser(String username, String password){
-        SQL sql = new SQL("usersDB.db");
-
-        User sqlUser = sql.confirmLogin(username, password);
+    public void loginUser(String username, String password, @NotNull SQL usersDB){
+        User sqlUser = usersDB.confirmLogin(username, password);
         if(sqlUser.getPermissions() >= 0){
             this.id = sqlUser.id;
             this.login = sqlUser.login;
             this.permissions = sqlUser.permissions;
+            this.firstName = sqlUser.firstName;
+            this.lastName = sqlUser.lastName;
         }
-
-//        try {
-//            sql.close();
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
     }
 }
