@@ -1,64 +1,101 @@
 package com.JGSS.Projekt.Controller;
 
-import com.JGSS.Projekt.Controller.SQL;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
+
+import com.JGSS.Projekt.Classes.SQL;
 import com.JGSS.Projekt.Classes.User;
-import com.JGSS.Projekt.Classes.Book;
 
 @WebServlet(name = "GetPost", value = "/GetPost")
 public class GetPost extends HttpServlet {
+    private User loggedUser;
+    private SQL usersdb;
+    private SQL booksDB;
+    private HttpSession session;
+    private PrintWriter out;
+    private ServletContext appContext;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void login(){
+        String login = request.getParameter("Login");
+        String password = request.getParameter("Password");
+
+        if(login == null || password == null)
+            session.setAttribute("loggedUser", new User(-1));
+        else{
+            User user = new User(-1);
+            boolean result = user.loginUser(login, password, usersdb);
+            if(result){
+                session.setAttribute("loggedUser", user);
+            }
+            else{
+                session.setAttribute("loggedUser", new User(-1));
+            }
+        }
+        try {
+            response.sendRedirect(request.getContextPath() + "/index.jsp?page=login&action=login");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void logout(){
+        User user = new User(-1);
+        session.setAttribute("loggedUser", user);
+
+        try {
+            response.sendRedirect(request.getContextPath() + "/index.jsp?page=logout&action=logout");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/html; charset=utf-8");
         response.setCharacterEncoding("utf-8");
 
-        HttpSession session = request.getSession();
-        ServletContext appContext = getServletContext();
+        session = request.getSession();
+        appContext = getServletContext();
+        this.request = request;
+        this.response = response;
 
-        SQL usersdb = (SQL) appContext.getAttribute("usersDB");
 
-        String action = request.getParameter("action");
-        if (action == null) action = "";
-
-        if (action.equals("login")){
-            String login = request.getParameter("Login");
-            String password = request.getParameter("Password");
-
-            if(login == null || password == null)
-                session.setAttribute("loggedUser", null);
-            else{
-                User user = new User(-1);
-                user.loginUser(login, password, usersdb);
-                if(user != null){
-                    session.setAttribute("loggedUser", user);
-                }
-                else{
-                    session.setAttribute("loggedUser", new User(-1));
-                }
-            }
-            response.sendRedirect(request.getContextPath() + "/index.jsp?page=login&action=login");
+        loggedUser = (User) session.getAttribute("loggedUser");
+        if( loggedUser.getPermissions() == -1){
+            loggedUser = new User(-1);
+            session.setAttribute("loggedUser", loggedUser);
         }
 
-        if (action.equals("logout")){
-            User user = new User(-1);
-            session.setAttribute("loggedUser", user);
+        usersdb = (SQL) appContext.getAttribute("usersDB");
+        if(usersdb.getConn() == null){
+            usersdb = new SQL("usersDB.db");
+            appContext.setAttribute("usersDB", usersdb);
+        }
 
-            response.sendRedirect(request.getContextPath() + "/index.jsp?page=logout&action=logout");
+        booksDB = (SQL) appContext.getAttribute("booksDB");
+        if(booksDB.getConn() == null){
+            booksDB = new SQL("booksDB.db");
+            appContext.setAttribute("booksDB", booksDB);
+        }
+
+        String action = "" + request.getParameter("action");
+
+        switch (action) {
+            case "login":
+                login();
+                break;
+
+            case "logout":
+                logout();
+                break;
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         doGet(request, response);
     }
 

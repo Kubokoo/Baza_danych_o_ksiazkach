@@ -86,7 +86,7 @@ public class Narzedzia {
     {
         String wyjscie = "main";
         String[] strony = prawidlowe.split(";");
-        if (wejscie==null) wejscie="main";
+        if (wejscie == null) wejscie = "main";
 
         for (String poprawna: strony)
         {

@@ -17,9 +17,9 @@
     </div>
     <div id="newsy">
         <ul>
-            <% if(loggedUser.getPermissions() == 1) { %>
+            <% if(loggedUser.getPermissions() == 1 || loggedUser.getPermissions() == 2) { %>
                 <li><a href="index.jsp?page=browseBooks">Zarządzaj swoimi książkami</a></li>
-            <% } else if(loggedUser.getPermissions() == 2) { %>
+            <% } if(loggedUser.getPermissions() == 2) { %>
                 <li><a href="index.jsp?page=admin">Administracja</a></li>
             <% } %>
         </ul>

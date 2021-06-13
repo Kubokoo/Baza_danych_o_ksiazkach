@@ -57,6 +57,12 @@ function deleteUser(id){
     sendAsync("JSON?page=profile&action=deleteUser", "POST", JSON.stringify(content), "application/json", null);
 }
 
+function deleteBook(ISBN){
+    var content = JSON.parse('{"ISBN": "' + ISBN + '"}');
+
+    sendAsync("JSON?page=profile&action=deleteBook", "POST", JSON.stringify(content), "application/json", null);
+}
+
 function getSugestions(fieldID) {
     if(!fieldID) return;
     else {
@@ -84,7 +90,8 @@ function setSugestion(fieldID, data){
     field.value = data;
 }
 
-function sendAsync (url, method, data, dataType, elementId){
+function sendAsync (url, method, data, dataType, elementId){ //TODO ogarnąć callback żeby zwracało wynik dopiero po
+    // wykoaniu
     method = method || "GET";
     data = data || null;
     dataType = dataType || "text/plain";
@@ -125,15 +132,21 @@ window.onload = function changeInputType(){
         var trHead = thead.children[0].children;
 
         var tbody = field.children["1"];
-        var trBody = tbody.children[0].children;
 
         for (var i = 0; i < trHead.length; i++){
             if(trHead[i].textContent == "Id"){
-                trBody[i].children[0].disabled = true;
+                for(var j = 0; j < tbody.childElementCount; j++){
+                    var trBody = tbody.children[j].children;
+                    trBody[i].children[0].disabled = true;
+                }
+
             }
             else if(trHead[i].textContent == "Password") {
-                trBody[i].children[0].type = "password";
-                trBody[i].children[0].placeholder = "bez zmiany hasła";
+                for(var j = 0; j < tbody.childElementCount; j++){
+                    var trBody = tbody.children[j].children;
+                    trBody[i].children[0].type = "password";
+                    trBody[i].children[0].placeholder = "bez zmiany hasła";
+                }
             }
         }
     }

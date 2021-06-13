@@ -1,10 +1,5 @@
 package com.JGSS.Projekt.Classes;
 
-import com.JGSS.Projekt.Controller.SQL;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.SQLException;
-
 public class User {
     private int id;
     private String login;
@@ -99,7 +94,7 @@ public class User {
         this.lastName = lastName;
     }
 
-    public void loginUser(String username, String password, @NotNull SQL usersDB){
+    public boolean loginUser(String username, String password, SQL usersDB){
         User sqlUser = usersDB.confirmLogin(username, password);
         if(sqlUser.getPermissions() >= 0){
             this.id = sqlUser.id;
@@ -107,6 +102,8 @@ public class User {
             this.permissions = sqlUser.permissions;
             this.firstName = sqlUser.firstName;
             this.lastName = sqlUser.lastName;
+            return true;
         }
+        return false;
     }
 }

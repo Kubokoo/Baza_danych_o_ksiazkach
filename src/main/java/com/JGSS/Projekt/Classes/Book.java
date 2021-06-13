@@ -70,12 +70,4 @@ public class Book {
     public void setAuthor(String author) {
         this.author = author;
     }
-
-    public String getPublisihng_House() {
-        return publishing_House;
-    }
-
-    public void setPublisihng_House(String publisihng_House) {
-        this.publishing_House = publisihng_House;
-    }
 }

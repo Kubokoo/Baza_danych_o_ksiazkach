@@ -1,9 +1,9 @@
-<%@ page import="com.JGSS.Projekt.Controller.SQL" %>
+<%@ page import="com.JGSS.Projekt.Classes.SQL" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
 <jsp:useBean id="columns" class="java.util.LinkedList" scope="application"/>
-<jsp:useBean id="usersDB" class="com.JGSS.Projekt.Controller.SQL" scope="application"/>
-<jsp:useBean id="booksDB" class="com.JGSS.Projekt.Controller.SQL" scope="application"/>
+<jsp:useBean id="usersDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
+<jsp:useBean id="booksDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
 <jsp:useBean id="i" class="com.JGSS.Projekt.Classes.Counter"/>
 <h3>Zarządzanie profilem:</h3>
 <table id="tableUsersBody">

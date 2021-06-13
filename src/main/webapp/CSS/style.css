@@ -47,6 +47,7 @@ html {
     display: block;
     float: left;
     margin-bottom: 10px;
+    width: 150px;
 }
 
 #newsy ul{

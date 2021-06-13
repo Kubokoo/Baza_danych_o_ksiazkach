@@ -1,9 +1,10 @@
 <%@ page import="com.JGSS.Projekt.Classes.User" %>
-<%@ page import="com.JGSS.Projekt.Controller.SQL" %>
+<%@ page import="com.JGSS.Projekt.Classes.SQL" %>
+<%@ page import="com.JGSS.Projekt.Classes.Narzedzia" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
-<jsp:useBean id="usersDB" class="com.JGSS.Projekt.Controller.SQL" scope="application"/>
-<jsp:useBean id="booksDB" class="com.JGSS.Projekt.Controller.SQL" scope="application"/>
+<jsp:useBean id="usersDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
+<jsp:useBean id="booksDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,6 +34,25 @@
     String pageString = request.getParameter("page");
     if (request.getParameter("IBAN") != null) pageString = "searchResult";
     if (pageString == null) pageString = "main";
+
+    switch (loggedUser.getPermissions()){
+        case 0:
+            pageString = Narzedzia
+                    .filtrujStrone(pageString, "profile;login;logout;searchResult;main;");
+            break;
+        case 1:
+            pageString = Narzedzia
+                    .filtrujStrone(pageString, "profile;login;logout;searchResult;main;browseBooks;");
+            break;
+        case 2:
+            pageString = Narzedzia
+                    .filtrujStrone(pageString, "profile;login;logout;searchResult;main;browseBooks;admin;");
+            break;
+        default:
+            pageString = Narzedzia
+                    .filtrujStrone(pageString, "main;searchResult;logout;");
+            break;
+    }
 %>
 <body>
     <div id="container">
@@ -40,7 +60,6 @@
         <jsp:include page="/WEB-INF/View/menu.jsp" />
         <div id="srodek">
             <div id="tresc">
-                <%-- Filtrowanie w zależności od uprawnień --%>
                 <jsp:include page="/WEB-INF/View/content.jsp">
                     <jsp:param name="web_page" value="<%=pageString%>"/>
                 </jsp:include>

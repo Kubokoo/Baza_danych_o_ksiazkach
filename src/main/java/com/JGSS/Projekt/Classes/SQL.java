@@ -1,6 +1,4 @@
-package com.JGSS.Projekt.Controller;
-
-import com.JGSS.Projekt.Classes.User;
+package com.JGSS.Projekt.Classes;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -8,7 +6,6 @@ import java.sql.*;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
-import java.util.List;
 
 public class SQL{
     public static final String DRIVER = "org.sqlite.JDBC";
@@ -17,6 +14,7 @@ public class SQL{
     private Connection conn;
     private PreparedStatement stat;
     private ResultSet result;
+    private String DBName;
 
     public Connection getConn() {
         return conn;
@@ -27,6 +25,8 @@ public class SQL{
     }
 
     public SQL(String DBName){
+        this.DBName = DBName;
+
         try {
             Class.forName(SQL.DRIVER);
         } catch (ClassNotFoundException e) {
@@ -44,36 +44,6 @@ public class SQL{
             System.err.println("Connection problem or wrong DB name.");
             e.printStackTrace();
         }
-    }
-
-//    @Override
-//    protected void finalize() throws SQLException {
-//        stat.close();
-//        conn.close();
-//    }
-
-    public List<User> getUsers(String filer){
-        List<User> users = new LinkedList<>();
-
-        try {
-            ResultSet result = stat.executeQuery("SELECT * FROM 'users'" + filer + ";");
-            int idDB, permissionsDB;
-            String userDB, passwordDB, firstName, lastName;
-            while(result.next()) {
-                idDB = result.getInt("Id");
-                userDB = result.getString("Username");
-                passwordDB = result.getString("Password");
-                permissionsDB = result.getInt("Permissions");
-                firstName = result.getString("FirsName");
-                lastName = result.getString("LastName");
-                users.add(new User(idDB, userDB, passwordDB, permissionsDB, firstName, lastName));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return users;
     }
 
     public User confirmLogin(String login, String password){
@@ -108,6 +78,7 @@ public class SQL{
 
         return user;
     }
+
     public LinkedList<String> getCurrUser(String login){
         LinkedList<String> user = new LinkedList<>();
         try {
@@ -136,6 +107,38 @@ public class SQL{
         }
 
         return user;
+    }
+
+    public LinkedList<LinkedList> getAllUsers(){
+        LinkedList<LinkedList> allUsers = new LinkedList<>();
+
+        try {
+            String SQLQuery = "SELECT * FROM 'Users';";
+            stat = conn.prepareStatement(SQLQuery);
+            ResultSet result =
+                    stat.executeQuery();
+            while(result.next()) {
+                LinkedList<String> user = new LinkedList<>();
+                user.add(result.getString("Id"));
+                user.add(result.getString("Username"));
+                user.add("****");
+                user.add(result.getString("Permissions"));
+                user.add(result.getString("FirstName"));
+                user.add(result.getString("LastName"));
+                allUsers.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return allUsers;
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return allUsers;
     }
 
     public boolean editUser(int id, String userName, String password,
@@ -203,14 +206,14 @@ public class SQL{
     }
 
     public boolean deleteUser(int id){
-        boolean result = false;
         String SQLQuery = "DELETE FROM Users\n" +
                 "WHERE Id = ?;";
         try {
             stat = conn.prepareStatement(SQLQuery);
             stat.setInt(1, id);
-            result =
-                    stat.execute();
+            int resultInt =
+                    stat.executeUpdate();
+            if(resultInt > 0) return true;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             return false;
@@ -223,15 +226,74 @@ public class SQL{
             }
         }
 
+        return false;
+    }
 
-        return result;
+    public LinkedList<LinkedList> getAllBooks(){
+        LinkedList<LinkedList> allBooks = new LinkedList<>();
+
+        try {
+            String SQLQuery = "SELECT * FROM 'Books';";
+            stat = conn.prepareStatement(SQLQuery);
+            ResultSet result =
+                    stat.executeQuery();
+            while(result.next()) {
+                LinkedList<String> book = new LinkedList<>();
+                book.add(result.getString("ISBN"));
+                book.add(result.getString("Title"));
+                book.add(new Date(result.getInt("Release_Date")).toString());
+                book.add(result.getString("Author"));
+                book.add(result.getString("Publishing_House"));
+                book.add(result.getString("OwnerID"));
+                allBooks.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return allBooks;
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return allBooks;
+    }
+
+    public boolean deleteBook(String ISBN){
+        String SQLQuery = "DELETE FROM Books\n" +
+                "WHERE ISBN = ?;";
+        try {
+            stat = conn.prepareStatement(SQLQuery);
+            stat.setString(1, ISBN);
+            int resultInt =
+                    stat.executeUpdate();
+            if(resultInt > 0) return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+        finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return false;
     }
 
     public LinkedList<String> columnsLabels(){
         LinkedList<String> columns = new LinkedList<>();
 
         try {
-            String SQLQuery = "SELECT * FROM 'Users' WHERE 0=1";
+            String SQLQuery = null;
+            if(DBName == "usersDB.db")
+                SQLQuery = "SELECT * FROM 'Users' WHERE 0=1";
+            else if (DBName == "booksDB.db")
+                SQLQuery = "SELECT * FROM 'Books' WHERE 0=1";
             stat = conn.prepareStatement(SQLQuery);
             result =
                     stat.executeQuery();
