@@ -229,6 +229,35 @@ public class SQL{
         return false;
     }
 
+    public boolean addUser(String userName, String password,
+                            int permisions, String firstName, String lastName){
+        int resultInt = 0;
+        String SQLQuery = "INSERT INTO Users\n" +
+                "(Username, Password, Permissions, FirstName, LastName)" +
+                "VALUES (?, ?, ?, ?, ?);";
+        try {
+            stat = conn.prepareStatement(SQLQuery);
+            stat.setString(1, userName);
+            stat.setString(2, password);
+            stat.setInt(3, permisions);
+            stat.setString(4, firstName);
+            stat.setString(5, lastName);
+            resultInt =
+                    stat.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+
+        return resultInt == 1;
+    }
+
     public LinkedList<LinkedList> getAllBooks(){
         LinkedList<LinkedList> allBooks = new LinkedList<>();
 
@@ -241,7 +270,7 @@ public class SQL{
                 LinkedList<String> book = new LinkedList<>();
                 book.add(result.getString("ISBN"));
                 book.add(result.getString("Title"));
-                book.add(new Date(result.getInt("Release_Date")).toString());
+                book.add(result.getString("Release_Date"));
                 book.add(result.getString("Author"));
                 book.add(result.getString("Publishing_House"));
                 book.add(result.getString("OwnerID"));
@@ -259,6 +288,35 @@ public class SQL{
         }
 
         return allBooks;
+    }
+
+    public boolean addBook(String ISBN, String title, String release_Date,
+                           String author, String publishing_House, int ownerID){
+        int resultInt = 0;
+        String SQLQuery = "INSERT INTO Books\n" +
+                "(ISBN, Title, Release_Date, Author, Publishing_House, OwnerID)" +
+                "VALUES (?, ?, ?, ?, ?, ?);";
+        try {
+            stat = conn.prepareStatement(SQLQuery);
+            stat.setString(1, ISBN);
+            stat.setString(2, title);
+            stat.setString(3, release_Date);
+            stat.setString(4, author);
+            stat.setString(5, publishing_House);
+            stat.setInt(5, ownerID);
+            resultInt =
+                    stat.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return resultInt == 1;
     }
 
     public boolean deleteBook(String ISBN){
@@ -283,6 +341,42 @@ public class SQL{
         }
 
         return false;
+    }
+
+    public boolean editBook(String ISBN, String title, String release_Date,
+                            String author, String publishing_House, int ownerID){
+        int resultInt = 0;
+        String SQLQuery = "UPDATE Books\n" +
+                "SET ISBN    = ?,\n" +
+                "    Title    = ?,\n" +
+                "    Release_Date = ?,\n" +
+                "    Author   = ?,\n" +
+                "    Publishing_House    = ?,\n" +
+                "    OwnerID    = ?\n" +
+                "WHERE ISBN = ?;";
+        try {
+            stat = conn.prepareStatement(SQLQuery);
+            stat.setString(1, ISBN);
+            stat.setString(2, title);
+            stat.setString(3, release_Date);
+            stat.setString(4, author);
+            stat.setString(5, publishing_House);
+            stat.setInt(6, ownerID);
+            stat.setString(7, ISBN);
+            resultInt =
+                    stat.executeUpdate();
+            stat.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return resultInt == 1;
     }
 
     public LinkedList<String> columnsLabels(){

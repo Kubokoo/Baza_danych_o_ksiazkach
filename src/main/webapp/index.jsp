@@ -3,7 +3,7 @@
 <%@ page import="com.JGSS.Projekt.Classes.Narzedzia" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
-<jsp:useBean id="usersDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
+<jsp:useBean id="usersdb" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
 <jsp:useBean id="booksDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
 <!DOCTYPE html>
 <html>
@@ -16,19 +16,22 @@
     <script type="text/javascript" src="JS/main.js"></script>
 </head>
 <%
-    if(loggedUser == null){
+    loggedUser = (User) session.getAttribute("loggedUser");
+    if(loggedUser.getPermissions() == -1){
         loggedUser = new User(-1);
         session.setAttribute("loggedUser", loggedUser);
     }
 
-    if(usersDB.getConn() == null){
-        SQL sql = new SQL("usersDB.db");
-        application.setAttribute("usersDB", sql);
+    usersdb = (SQL) application.getAttribute("usersDB");
+    if(usersdb == null || usersdb.getConn() == null){
+        usersdb = new SQL("usersDB.db");
+        application.setAttribute("usersDB", usersdb);
     }
 
-    if(booksDB.getConn() == null){
-        SQL sql = new SQL("booksDB.db");
-        application.setAttribute("booksDB", sql);
+    booksDB = (SQL) application.getAttribute("booksDB");
+    if(booksDB == null || booksDB.getConn() == null){
+        booksDB = new SQL("booksDB.db");
+        application.setAttribute("booksDB", booksDB);
     }
 
     String pageString = request.getParameter("page");

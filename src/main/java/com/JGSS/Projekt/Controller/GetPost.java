@@ -64,22 +64,8 @@ public class GetPost extends HttpServlet {
 
 
         loggedUser = (User) session.getAttribute("loggedUser");
-        if( loggedUser.getPermissions() == -1){
-            loggedUser = new User(-1);
-            session.setAttribute("loggedUser", loggedUser);
-        }
-
         usersdb = (SQL) appContext.getAttribute("usersDB");
-        if(usersdb.getConn() == null){
-            usersdb = new SQL("usersDB.db");
-            appContext.setAttribute("usersDB", usersdb);
-        }
-
         booksDB = (SQL) appContext.getAttribute("booksDB");
-        if(booksDB.getConn() == null){
-            booksDB = new SQL("booksDB.db");
-            appContext.setAttribute("booksDB", booksDB);
-        }
 
         String action = "" + request.getParameter("action");
 

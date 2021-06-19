@@ -30,8 +30,26 @@ function message(text) {
     if(text) alert(text);
 }
 
-function changeUser(id){
-    var content = JSON.parse('{"Id": "", "Username": "","Password": "", "Permissions": "", "FirstName": "","LastName": ""}');
+function bookUserButton(id, action){
+    switch (action) {
+        case "editUser": case "addUser":
+            var content = JSON.parse('{"Id": "", "Username": "","Password": "", "Permissions": "", "FirstName": "","LastName": ""}');
+            break;
+
+        case "editBook": case "addBook":
+            var content = JSON.parse('{"ISBN": "", "Title": "","Release_Date": "", "Author": "", "Publishing_House": "","OwnerID": ""}');
+            break;
+
+        case "deleteUser":
+            var content = JSON.parse('{"Id": "' + id + '"}');
+            sendAsync("JSON?page=profile&action=deleteUser", "POST", JSON.stringify(content), "application/json", null);
+            return;
+
+        case "deleteBook":
+            var content = JSON.parse('{"ISBN": "' + id + '"}');
+            sendAsync("JSON?page=profile&action=deleteBook", "POST", JSON.stringify(content), "application/json", null);
+            return;
+    }
 
     var tr = id.parentElement.parentElement;
 
@@ -48,24 +66,28 @@ function changeUser(id){
         }
     }
 
-    sendAsync("JSON?page=profile&action=editUser", "POST", JSON.stringify(content), "application/json", null);
-}
+    switch (action) {
+        case "addUser":
+            sendAsync("JSON?page=profile&action=addUser", "POST", JSON.stringify(content), "application/json", null);
+            break;
 
-function deleteUser(id){
-    var content = JSON.parse('{"Id": "' + id + '"}');
+        case "editUser":
+            sendAsync("JSON?page=profile&action=editUser", "POST", JSON.stringify(content), "application/json", null);
+            break;
 
-    sendAsync("JSON?page=profile&action=deleteUser", "POST", JSON.stringify(content), "application/json", null);
-}
+        case "addBook":
+            sendAsync("JSON?page=profile&action=addBook", "POST", JSON.stringify(content), "application/json", null);
+            break;
 
-function deleteBook(ISBN){
-    var content = JSON.parse('{"ISBN": "' + ISBN + '"}');
+        case "editBook":
+            sendAsync("JSON?page=profile&action=editBook", "POST", JSON.stringify(content), "application/json", null);
+            break;
+    }
 
-    sendAsync("JSON?page=profile&action=deleteBook", "POST", JSON.stringify(content), "application/json", null);
 }
 
 function getSugestions(fieldID) {
-    if(!fieldID) return;
-    else {
+    if(fieldID) {
         var field = document.getElementById(fieldID);
         if (field.value.length < 3){
             var element = document.getElementById(fieldID+"_Result").childNodes;
@@ -73,8 +95,6 @@ function getSugestions(fieldID) {
             for (var i = 0; i < elementLength; i++){
                 element[0].remove();
             }
-
-            return;
         }
         else if(field.value.length >= 3){
             var fieldResult = document.getElementById(fieldID+"_Result");
@@ -124,30 +144,72 @@ function sendAsync (url, method, data, dataType, elementId){ //TODO ogarnąć ca
     return requester;
 }
 
-window.onload = function changeInputType(){
-    var field = document.getElementById("tableUsersBody");
-
-    if (field != null){
-        var thead = field.children["0"];
-        var trHead = thead.children[0].children;
-
-        var tbody = field.children["1"];
-
-        for (var i = 0; i < trHead.length; i++){
-            if(trHead[i].textContent == "Id"){
-                for(var j = 0; j < tbody.childElementCount; j++){
-                    var trBody = tbody.children[j].children;
-                    trBody[i].children[0].disabled = true;
-                }
-
+function changeInputFor(tHead, tBody){
+    for (var i = 0; i < tHead.length; i++){
+        if(tHead[i].textContent == "Id"){
+            for(var j = 0; j < tBody.childElementCount; j++){
+                var trBody = tBody.children[j].children;
+                trBody[i].children[0].disabled = true;
             }
-            else if(trHead[i].textContent == "Password") {
-                for(var j = 0; j < tbody.childElementCount; j++){
-                    var trBody = tbody.children[j].children;
-                    trBody[i].children[0].type = "password";
-                    trBody[i].children[0].placeholder = "bez zmiany hasła";
-                }
+
+        }
+        else if(tHead[i].textContent == "Password") {
+            for(var j = 0; j < tBody.childElementCount; j++){
+                var trBody = tBody.children[j].children;
+                trBody[i].children[0].type = "password";
+                trBody[i].children[0].placeholder = "bez zmiany hasła";
             }
         }
+        else if(tHead[i].textContent == "Release_Date"){
+            for(var j = 0; j < tBody.childElementCount; j++){
+                var trBody = tBody.children[j].children;
+                trBody[i].children[0].type = "date";
+            }
+        }
+        else if(tHead[i].textContent == "Permissions"){
+            for(var j = 0; j < tBody.childElementCount; j++){
+                var trBody = tBody.children[j].children;
+                trBody[i].children[0].type = "number";
+                trBody[i].children[0].min = 0;
+                trBody[i].children[0].max = 3;
+            }
+        }
+        else if(tHead[i].textContent == "OwnerID"){
+            for(var j = 0; j < tBody.childElementCount; j++){
+                var trBody = tBody.children[j].children;
+                trBody[i].children[0].type = "number";
+                trBody[i].children[0].min = 0;
+            }
+        }
+    }
+}
+
+function showTable(id){
+    if(id.style.display == "none"){
+        id.style.display = "table";
+        id.style.opacity = 1;
+    }
+    else{
+        id.style.opacity = 0;
+        id.style.display = "none";
+    }
+}
+
+window.onload = function changeInputType(){
+    var fieldUsers = document.getElementById("tableUsersBody");
+    var fieldBooks = document.getElementById("tableBooksBody");
+
+    var tHead,tBody;
+    if (fieldUsers != null){
+        tHead = fieldUsers.children["0"].children[0].children;
+        tBody = fieldUsers.children["1"];
+
+        changeInputFor(tHead, tBody);
+    }
+    if(fieldBooks != null){
+        tHead = fieldBooks.children["0"].children[0].children;
+        tBody = fieldBooks.children["1"];
+
+        changeInputFor(tHead, tBody);
     }
 }

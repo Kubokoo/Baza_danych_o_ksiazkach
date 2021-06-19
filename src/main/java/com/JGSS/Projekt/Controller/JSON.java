@@ -19,27 +19,25 @@ public class JSON extends HttpServlet {
     private PrintWriter out;
     private JSONObject json;
 
-    private void editUser(){
-        int id = Integer.parseInt((String) json.get("Id"));
-        String username = (String) json.get("Username");
-        String password = (String) json.get("Password");
-        int permissions = Integer.parseInt((String) json.get("Permissions"));
-        String firstName = (String) json.get("FirstName");
-        String lastName = (String) json.get("LastName");
+    String ISBN,title,release_Date,author,publishing_House;
+    int ownerID = 0;
 
+    String username,password, firstName, lastName;
+    int id = 0, permissions = 0;
+
+    private void editUser(){
         boolean result = usersdb.editUser(id, username, password, permissions, firstName, lastName);
         if(result){
-            session.setAttribute("loggedUser", new User(id, username, permissions, firstName, lastName));
-            out.write("Pomyślnie zmodyfikowano rekord");
+            if(loggedUser.getId() == id)
+                session.setAttribute("loggedUser", new User(id, username, permissions, firstName, lastName));
+            out.write("Pomyślnie zmodyfikowano użytkownika");
         }
         else {
-            out.write("Niepowodzenie zmiany rekordu");
+            out.write("Niepowodzenie modyfikacji użytkownika");
         }
     }
 
     private void deleteUser(){
-        int id = Integer.parseInt((String) json.get("Id"));
-
         boolean result = usersdb.deleteUser(id);
         if (result) {
             if(id == loggedUser.getId())
@@ -50,15 +48,42 @@ public class JSON extends HttpServlet {
         }
     }
 
-    private void deleteBook() {
-        String ISBN = (String) json.get("ISBN");
+    private void addUser(){
+        boolean result = usersdb.addUser(username, password, permissions, firstName, lastName);
+        if(result){
+            out.write("Pomyślnie dodano użytkownika");
+        }
+        else {
+            out.write("Niepowodzenie dodania użytkownika");
+        }
+    }
 
+    private void deleteBook() {
         boolean result = booksDB.deleteBook(ISBN);
         if (result) {
-//            session.setAttribute("loggedUser", new User(ISBN));
             out.write("Pomyślnie usunięto książkę z bazy");
         } else {
             out.write("Niepowodzenie usunięcia książki z bazy");
+        }
+    }
+
+    private void editBook(){
+        boolean result = booksDB.editBook(ISBN, title, release_Date, author, publishing_House, ownerID);
+        if(result){
+            out.write("Pomyślnie zmodyfikowano książkę");
+        }
+        else {
+            out.write("Niepowodzenie zmiany danych książki");
+        }
+    }
+
+    private void addBook(){
+        boolean result = booksDB.addBook(ISBN, title, release_Date, author, publishing_House, ownerID);
+        if(result){
+            out.write("Pomyślnie dodano książkę");
+        }
+        else {
+            out.write("Niepowodzenie dodania książki");
         }
     }
 
@@ -67,25 +92,11 @@ public class JSON extends HttpServlet {
         response.setCharacterEncoding("utf-8");
 
         session = request.getSession();
-        ServletContext appContext = getServletContext();
+        ServletContext application = getServletContext();
 
         loggedUser = (User) session.getAttribute("loggedUser");
-        if( loggedUser.getPermissions() == -1){
-            loggedUser = new User(-1);
-            session.setAttribute("loggedUser", loggedUser);
-        }
-
-        usersdb = (SQL) appContext.getAttribute("usersDB");
-        if(usersdb.getConn() == null){
-            usersdb = new SQL("usersDB.db");
-            appContext.setAttribute("usersDB", usersdb);
-        }
-
-        booksDB = (SQL) appContext.getAttribute("booksDB");
-        if(booksDB.getConn() == null){
-            booksDB = new SQL("booksDB.db");
-            appContext.setAttribute("booksDB", booksDB);
-        }
+        usersdb = (SQL) application.getAttribute("usersDB");
+        booksDB = (SQL) application.getAttribute("booksDB");
 
         String action = request.getParameter("action");
         if (action == null) action = "";
@@ -117,8 +128,33 @@ public class JSON extends HttpServlet {
             }
         }
 
-        String changedBook = "";
-        int changedUser = -1;
+
+        ISBN = (String) json.get("ISBN");
+        title = (String) json.get("Title");
+        release_Date = (String) json.get("Release_Date");
+        author = (String) json.get("Author");
+        publishing_House = (String) json.get("Publishing_House");
+        username = (String) json.get("Username");
+        password = (String) json.get("Password");
+        firstName = (String) json.get("FirstName");
+        lastName = (String) json.get("LastName");
+
+        String tmp;
+
+        tmp = (String) json.get("Permissions");
+        if(tmp != null && !tmp.equals(""))
+            permissions = Integer.parseInt((String) json.get("Permissions"));
+
+        tmp = (String) json.get("Id");
+        if(tmp != null && !tmp.equals(""))
+            id = Integer.parseInt((String) json.get("Id"));
+
+        tmp = (String) json.get("OwnerID");
+        if(tmp != null && !tmp.equals(""))
+            ownerID = Integer.parseInt((String) json.get("OwnerID"));
+
+        String changedBook;
+        int changedUser;
         switch (action) {
             case "editUser":
                 changedUser = Integer.parseInt((String) json.get("Id"));
@@ -157,12 +193,30 @@ public class JSON extends HttpServlet {
                     deleteUser();
                 break;
 
+            case "addUser":
+                if(loggedUser.getPermissions() == 2)
+                    addUser();
+                break;
+
             case "deleteBook":
                 changedBook = (String) json.get("ISBN");
                 if(loggedUser.getPermissions() == 2
                         || (loggedUser.getPermissions() >= 1)) /* TODO dodać weryfikcaję kto jest autorem &&
                         changedBook.getAuthor == loggedUser.getId() */
                     deleteBook();
+                break;
+
+            case "editBook":
+                changedBook = (String) json.get("ISBN");
+                if(loggedUser.getPermissions() == 2
+                        || (loggedUser.getPermissions() >= 1)) /* TODO dodać weryfikcaję kto jest autorem &&
+                        changedBook.getAuthor == loggedUser.getId() */
+                    editBook();
+                break;
+
+            case "addBook":
+                if(loggedUser.getPermissions() >= 1)
+                    addBook();
                 break;
         }
 

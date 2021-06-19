@@ -1,12 +1,47 @@
 <%@ page import="com.JGSS.Projekt.Classes.SQL" %>
 <%@ page import="java.util.LinkedList" %>
-<%@ page import="com.JGSS.Projekt.Classes.Book" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <jsp:useBean id="columns" class="java.util.LinkedList" scope="application"/>
 <jsp:useBean id="usersDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
 <jsp:useBean id="booksDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
 <jsp:useBean id="i" class="com.JGSS.Projekt.Classes.Counter"/>
-<h3>Zarządzanie książkami: <a href="index.jsp?page=admin&action=addBook"><img class="icon" src="Img/Add.png">Dodaj nową kiążkę</a></h3>
+
+<h3>Zarządzanie książkami:
+    <a onclick="showTable(tableBookAdd)" style="text-decoration: underline">
+        <img class="icon" src="Img/Add.png" alt="add">Dodaj nową kiążkę
+    </a>
+</h3>
+
+<table id="tableBookAdd" style="display: none">
+    <thead>
+    <tr>
+        <td>ISBN</td>
+        <td>Title</td>
+        <td>Release_Date</td>
+        <td>Author</td>
+        <td>Publishing_House</td>
+        <td>OwnerID</td>
+        <td>Akcje</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><input type="text"></td>
+        <td><input type="text"/></td>
+        <td><input type="date"/></td>
+        <td><input type="text"/></td>
+        <td><input type="text"/></td>
+        <td><input type="number" min="0"/></td>
+        <td>
+            <button id="addBook" class="deleteButton" onclick="bookUserButton(addBook, 'addBook')">
+                Dodaj
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<br/><br/>
+
 <table id="tableBooksBody">
     <thead>
     <tr>
@@ -23,7 +58,7 @@
     </thead>
     <tbody>
     <%
-        String valBook = "";
+        String valBook;
         LinkedList allBooks = booksDB.getAllBooks();
         for(i.setI(0); i.getI() < allBooks.size(); i.setI(i.getI()+1)){
             LinkedList book = (LinkedList) allBooks.get(i.getI());
@@ -43,13 +78,15 @@
         <td>
             <label
                     for="changeBook_<%=book.get(0)%>"><img class="icon" alt="edit" src="Img/Pencil.png"></label>
-            <button id="changeBook_<%=book.get(0)%>" class="deleteButton" onclick="changeUser(changeUser_<%=book.get(0)%>)">
+            <button id="changeBook_<%=book.get(0)%>" class="deleteButton"
+                    onclick="bookUserButton(changeBook_<%=book.get(0)%>, 'editBook')">
                 Zmień
             </button>
             <label for="deleteBook_<%=book.get(0)%>">
                 <img class="icon" alt="remove" src="Img/Trashcan.png">
             </label>
-            <button id="deleteBook_<%=book.get(0)%>" class="deleteButton" onclick="deleteBook('<%=book.get(0)%>')">
+            <button id="deleteBook_<%=book.get(0)%>" class="deleteButton"
+                    onclick="bookUserButton('<%=book.get(0)%>', 'deleteBook')">
                 Usuń
             </button>
         </td>
@@ -61,8 +98,39 @@
 <br/><br/>
 
 <h3>Zarządzanie użytkownikami:
-    <a href="index.jsp?page=admin&action=addUser"><img class="icon" src="Img/Add.png">Dodaj nowego użytkownika</a>
+    <a onclick="showTable(tableUserAdd)" style="text-decoration: underline">
+        <img class="icon" src="Img/Add.png" alt="Add"> Dodaj nowego użytkownika
+    </a>
 </h3>
+<table id="tableUserAdd" style="display: none">
+    <thead>
+        <tr>
+            <td style="display:none;">ID</td>
+            <td>Username</td>
+            <td>Password</td>
+            <td>Permissions</td>
+            <td>FirstName</td>
+            <td>LastName</td>
+            <td>Akcje</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="display: none"><input type="number"></td>
+            <td><input type="text"/></td>
+            <td><input type="password"/></td>
+            <td><input type="number" min="0" max="3"/></td>
+            <td><input type="text"/></td>
+            <td><input type="text"/></td>
+            <td>
+                <button id="addUser" class="deleteButton" onclick="bookUserButton(addUser, 'addUser')">
+                    Dodaj
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br/><br/>
 
 <jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
 <table id="tableUsersBody">
@@ -101,13 +169,14 @@
             <td>
                 <label
                         for="changeUser_<%=user.get(0)%>"><img class="icon" alt="edit" src="Img/Pencil.png"></label>
-                <button id="changeUser_<%=user.get(0)%>" class="deleteButton" onclick="changeUser(changeUser_<%=user.get(0)%>)">
+                <button id="changeUser_<%=user.get(0)%>" class="deleteButton" onclick="bookUserButton(changeUser_<%=user.get(0)%>, 'editUser')">
                     Zmień
                 </button>
                 <label for="deleteUser_<%=user.get(0)%>">
                     <img class="icon" alt="remove" src="Img/Trashcan.png">
                 </label>
-                <button id="deleteUser_<%=user.get(0)%>" class="deleteButton" onclick="deleteUser(<%=user.get(0)%>)">
+                <button id="deleteUser_<%=user.get(0)%>" class="deleteButton"
+                        onclick="bookUserButton(<%=user.get(0)%>, 'deleteUser')">
                     Usuń
                 </button>
             </td>
