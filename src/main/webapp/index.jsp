@@ -1,10 +1,9 @@
-<%@ page import="com.JGSS.Projekt.Classes.User" %>
-<%@ page import="com.JGSS.Projekt.Classes.SQL" %>
-<%@ page import="com.JGSS.Projekt.Classes.Narzedzia" %>
+<%@ page import="JGSS.Models.User" %>
+<%@ page import="JGSS.Services.SQL" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
-<jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
-<jsp:useBean id="usersdb" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
-<jsp:useBean id="booksDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
+<jsp:useBean id="loggedUser" class="JGSS.Models.User" scope="session"/>
+<jsp:useBean id="usersdb" class="JGSS.Services.SQL" scope="application"/>
+<jsp:useBean id="booksDB" class="JGSS.Services.SQL" scope="application"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,24 +37,6 @@
     if (request.getParameter("IBAN") != null) pageString = "searchResult";
     if (pageString == null) pageString = "main";
 
-    switch (loggedUser.getPermissions()){
-        case 0:
-            pageString = Narzedzia
-                    .filtrujStrone(pageString, "profile;login;logout;searchResult;main;");
-            break;
-        case 1:
-            pageString = Narzedzia
-                    .filtrujStrone(pageString, "profile;login;logout;searchResult;main;browseBooks;");
-            break;
-        case 2:
-            pageString = Narzedzia
-                    .filtrujStrone(pageString, "profile;login;logout;searchResult;main;browseBooks;admin;");
-            break;
-        default:
-            pageString = Narzedzia
-                    .filtrujStrone(pageString, "main;searchResult;logout;");
-            break;
-    }
 %>
 <body>
     <div id="container">

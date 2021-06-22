@@ -1,7 +1,8 @@
-package com.JGSS.Projekt.Controller;
+package JGSS.Controller;
 
-import com.JGSS.Projekt.Classes.SQL;
-import com.JGSS.Projekt.Classes.User;
+import JGSS.Services.SQL;
+import JGSS.Models.User;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import java.io.*;

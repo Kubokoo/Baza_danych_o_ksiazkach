@@ -1,4 +1,4 @@
-package com.JGSS.Projekt.Classes;
+package JGSS.Services;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -6,6 +6,8 @@ import java.sql.*;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
+
+import JGSS.Models.User;
 
 public class SQL{
     public static final String DRIVER = "org.sqlite.JDBC";

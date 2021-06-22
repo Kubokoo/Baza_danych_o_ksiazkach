@@ -1,4 +1,6 @@
-package com.JGSS.Projekt.Classes;
+package JGSS.Models;
+
+import JGSS.Services.SQL;
 
 public class User {
     private int id;

@@ -1,4 +1,4 @@
-package com.JGSS.Projekt.Classes;
+package JGSS.Models;
 
 import java.util.Date;
 

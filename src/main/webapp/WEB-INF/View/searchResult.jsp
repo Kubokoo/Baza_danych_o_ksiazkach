@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
-<jsp:useBean id="book" class="com.JGSS.Projekt.Classes.Book" scope="page"/>
+<jsp:useBean id="book" class="JGSS.Models.Book" scope="page"/>
 <h3>Wyniki wyszukiwania:</h3>
 <table>
     <thead>

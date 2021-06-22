@@ -1,10 +1,9 @@
-<%@ page import="com.JGSS.Projekt.Classes.SQL" %>
+<%@ page import="JGSS.Services.SQL" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
-<jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
+<jsp:useBean id="loggedUser" class="JGSS.Models.User" scope="session"/>
 <jsp:useBean id="columns" class="java.util.LinkedList" scope="application"/>
-<jsp:useBean id="usersDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
-<jsp:useBean id="booksDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
-<jsp:useBean id="i" class="com.JGSS.Projekt.Classes.Counter"/>
+<jsp:useBean id="usersDB" class="JGSS.Services.SQL" scope="application"/>
+<jsp:useBean id="booksDB" class="JGSS.Services.SQL" scope="application"/>
 <h3>Zarządzanie profilem:</h3>
 <table id="tableUsersBody">
     <thead>
@@ -12,9 +11,9 @@
         <%
             usersDB = (SQL) application.getAttribute("usersDB");
             columns = usersDB.columnsLabels();
-            for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
+            for(int i = 0; i < columns.size(); ++i){
         %>
-        <td><%=columns.get(i.getI())%></td>
+        <td><%=columns.get(i)%></td>
         <% } %>
         <td>Akcje</td>
     </tr>
@@ -25,8 +24,8 @@
         <%
             String val;
             columns = usersDB.getCurrUser(loggedUser.getLogin());
-            for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
-                val = (String) columns.get(i.getI());
+            for(int i = 0; i < columns.size(); ++i){
+                val = (String) columns.get(i);
                 if(val == null || val.equals("null") || val.equals("****")) {
                     val = "";
                 }

@@ -1,12 +1,12 @@
-package com.JGSS.Projekt.Controller;
+package JGSS.Controller;
 
 import java.io.*;
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 
-import com.JGSS.Projekt.Classes.SQL;
-import com.JGSS.Projekt.Classes.User;
+import JGSS.Services.SQL;
+import JGSS.Models.User;
 
 @WebServlet(name = "GetPost", value = "/GetPost")
 public class GetPost extends HttpServlet {

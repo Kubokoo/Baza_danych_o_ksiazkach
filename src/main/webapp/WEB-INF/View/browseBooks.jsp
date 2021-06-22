@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
-<jsp:useBean id="book" class="com.JGSS.Projekt.Classes.Book" scope="page"/>
+<jsp:useBean id="book" class="JGSS.Models.Book" scope="page"/>
 <h2>Twoje książki</h2>
 <h3>Zarządzanie książkami:
     <a href="index.jsp?page=browseBooks&action=addBook"><img class="icon" src="Img/Add.png">Dodaj nową kiążkę</a></h3>

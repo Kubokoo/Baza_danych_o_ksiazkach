@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
-<jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
+<jsp:useBean id="loggedUser" class="JGSS.Models.User" scope="session"/>
 <%
     String action = "" + request.getParameter("action");
     if(action.equals("login") && loggedUser.getPermissions() != -1){ %>
