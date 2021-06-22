@@ -26,11 +26,39 @@
 //     }
 // }
 
-function message(text) {
-    if(text) alert(text);
+function message(jsonMessage) {
+    if(jsonMessage){
+        var jsonContent = JSON.parse(jsonMessage);
+        if(jsonContent.Action){
+            switch(jsonContent.Action){
+                case "deleteUser":
+                    var tr = document.getElementById("userID_" + jsonContent.Id);
+                    tr.parentNode.deleteRow(tr.rowIndex - 1);
+                    break;
+
+                case "deleteBook":
+                    var tr = document.getElementById("deleteBook_" + jsonContent.Id);
+                    tr.parentNode.parentNode.parentNode.deleteRow(tr.rowIndex - 1);
+                    break;
+                // case "addUser": //TODO przenieść akcje z wcześniejszego rekordu ze zmianą id w akcjach
+                //     var tr = document.getElementById("tableUserAdd").rows[1];
+                //     tr = tr.cloneNode(true);
+                //     tr.children[0].display = "table-cell";
+                //
+                //
+                //     var targetTable = document.getElementById("tableUsersBody");
+                //     targetTable.appendChild(tr);
+                //     break;
+            }
+        }
+        if(jsonContent.Response)
+            alert(jsonContent.Response);
+    }
 }
 
-function bookUserButton(id, action){
+const IDregex = /[a-zA-Z]+[\"_\"]{1}/;
+
+function bookUserButton(element, action){
     switch (action) {
         case "editUser": case "addUser":
             var content = JSON.parse('{"Id": "", "Username": "","Password": "", "Permissions": "", "FirstName": "","LastName": ""}');
@@ -41,17 +69,19 @@ function bookUserButton(id, action){
             break;
 
         case "deleteUser":
+            var id = element.id.replace(IDregex,"");
             var content = JSON.parse('{"Id": "' + id + '"}');
             sendAsync("JSON?page=profile&action=deleteUser", "POST", JSON.stringify(content), "application/json", null);
             return;
 
         case "deleteBook":
+            var id = element.id.replace(IDregex,"");
             var content = JSON.parse('{"ISBN": "' + id + '"}');
             sendAsync("JSON?page=profile&action=deleteBook", "POST", JSON.stringify(content), "application/json", null);
             return;
     }
 
-    var tr = id.parentElement.parentElement;
+    var tr = element.parentElement.parentElement;
 
     var properties = [];
     for(var i = 0; i < tr.childElementCount - 1; i++){
@@ -144,7 +174,22 @@ function sendAsync (url, method, data, dataType, elementId){ //TODO ogarnąć ca
     return requester;
 }
 
+function showTable(id){
+    if(id.style.display == "none"){
+        id.style.display = "table";
+        id.style.opacity = 1;
+    }
+    else{
+        id.style.opacity = 0;
+        id.style.display = "none";
+    }
+}
+
 function changeInputFor(tHead, tBody){
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    const page = params.page;
+
     for (var i = 0; i < tHead.length; i++){
         if(tHead[i].textContent == "Id"){
             for(var j = 0; j < tBody.childElementCount; j++){
@@ -171,7 +216,7 @@ function changeInputFor(tHead, tBody){
                 var trBody = tBody.children[j].children;
                 trBody[i].children[0].type = "number";
                 trBody[i].children[0].min = 0;
-                trBody[i].children[0].max = 3;
+                trBody[i].children[0].max = 2;
             }
         }
         else if(tHead[i].textContent == "OwnerID"){
@@ -179,19 +224,10 @@ function changeInputFor(tHead, tBody){
                 var trBody = tBody.children[j].children;
                 trBody[i].children[0].type = "number";
                 trBody[i].children[0].min = 0;
+                if(page == "browseBooks")
+                    trBody[i].children[0].disabled = true;
             }
         }
-    }
-}
-
-function showTable(id){
-    if(id.style.display == "none"){
-        id.style.display = "table";
-        id.style.opacity = 1;
-    }
-    else{
-        id.style.opacity = 0;
-        id.style.display = "none";
     }
 }
 

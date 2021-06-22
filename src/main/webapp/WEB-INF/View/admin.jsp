@@ -33,7 +33,7 @@
         <td><input type="text"/></td>
         <td><input type="number" min="0"/></td>
         <td>
-            <button id="addBook" class="deleteButton" onclick="bookUserButton(addBook, 'addBook')">
+            <button id="addBook" class="deleteButton" onclick="bookUserButton(this, 'addBook')">
                 Dodaj
             </button>
         </td>
@@ -79,14 +79,14 @@
             <label
                     for="changeBook_<%=book.get(0)%>"><img class="icon" alt="edit" src="Img/Pencil.png"></label>
             <button id="changeBook_<%=book.get(0)%>" class="deleteButton"
-                    onclick="bookUserButton(changeBook_<%=book.get(0)%>, 'editBook')">
+                    onclick="bookUserButton(this, 'editBook')">
                 Zmień
             </button>
             <label for="deleteBook_<%=book.get(0)%>">
                 <img class="icon" alt="remove" src="Img/Trashcan.png">
             </label>
             <button id="deleteBook_<%=book.get(0)%>" class="deleteButton"
-                    onclick="bookUserButton('<%=book.get(0)%>', 'deleteBook')">
+                    onclick="bookUserButton(this, 'deleteBook')">
                 Usuń
             </button>
         </td>
@@ -119,11 +119,11 @@
             <td style="display: none"><input type="number"></td>
             <td><input type="text"/></td>
             <td><input type="password"/></td>
-            <td><input type="number" min="0" max="3"/></td>
+            <td><input type="number" min="0" max="2"/></td>
             <td><input type="text"/></td>
             <td><input type="text"/></td>
             <td>
-                <button id="addUser" class="deleteButton" onclick="bookUserButton(addUser, 'addUser')">
+                <button type="button" id="addUser" class="deleteButton" onclick="bookUserButton(this, 'addUser')">
                     Dodaj
                 </button>
             </td>
@@ -169,14 +169,14 @@
             <td>
                 <label
                         for="changeUser_<%=user.get(0)%>"><img class="icon" alt="edit" src="Img/Pencil.png"></label>
-                <button id="changeUser_<%=user.get(0)%>" class="deleteButton" onclick="bookUserButton(changeUser_<%=user.get(0)%>, 'editUser')">
+                <button id="changeUser_<%=user.get(0)%>" class="deleteButton" onclick="bookUserButton(this, 'editUser')">
                     Zmień
                 </button>
                 <label for="deleteUser_<%=user.get(0)%>">
                     <img class="icon" alt="remove" src="Img/Trashcan.png">
                 </label>
                 <button id="deleteUser_<%=user.get(0)%>" class="deleteButton"
-                        onclick="bookUserButton(<%=user.get(0)%>, 'deleteUser')">
+                        onclick="bookUserButton(this, 'deleteUser')">
                     Usuń
                 </button>
             </td>

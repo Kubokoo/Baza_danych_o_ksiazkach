@@ -17,74 +17,91 @@ public class JSON extends HttpServlet {
     private SQL booksDB;
     private HttpSession session;
     private PrintWriter out;
-    private JSONObject json;
+    private String action;
 
-    String ISBN,title,release_Date,author,publishing_House;
-    int ownerID = 0;
-
-    String username,password, firstName, lastName;
-    int id = 0, permissions = 0;
-
-    private void editUser(){
+    private void editUser(int id, String username, String password, int permissions
+            , String firstName, String lastName){
         boolean result = usersdb.editUser(id, username, password, permissions, firstName, lastName);
         if(result){
             if(loggedUser.getId() == id)
                 session.setAttribute("loggedUser", new User(id, username, permissions, firstName, lastName));
-            out.write("Pomyślnie zmodyfikowano użytkownika");
+            String JSONResponse = "{\"Response\": \"" + "Pomyślnie zmodyfikowano użytkownika" + "\"}";
+            out.write(JSONResponse);
         }
         else {
-            out.write("Niepowodzenie modyfikacji użytkownika");
+            String JSONResponse = "{\"Response\": \"" + "Niepowodzenie modyfikacji użytkownika" + "\"}";
+            out.write(JSONResponse);
         }
     }
 
-    private void deleteUser(){
+    private void deleteUser(int id){
         boolean result = usersdb.deleteUser(id);
         if (result) {
             if(id == loggedUser.getId())
-                session.setAttribute("loggedUser", new User(id));
-            out.write("Pomyślnie usunięto użytkownika z bazy");
+                session.setAttribute("loggedUser", new User(-1));
+            String JSONResponse = "{\"Id\": \"" + id
+                    + "\", \"Action\": \"" + action
+                    + "\",\"Response\": \"" + "Pomyślnie usunięto użytkownika z bazy" + "\"}";
+            out.write(JSONResponse);
         } else {
-            out.write("Niepowodzenie usunięcia użytkownika z bazy");
+            String JSONResponse = "{\"Response\": \"" + "Niepowodzenie usunięcia użytkownika z bazy" + "\"}";
+            out.write(JSONResponse);
         }
     }
 
-    private void addUser(){
+    private void addUser(int id, String username,String password,int permissions,String firstName,String lastName){
         boolean result = usersdb.addUser(username, password, permissions, firstName, lastName);
+        String JSONResponse;
         if(result){
-            out.write("Pomyślnie dodano użytkownika");
+            JSONResponse = "{\"Id\": \"" + id
+                    + "\", \"Action\": \"" + action
+                    + "\",\"Response\": \"" + "Pomyślnie dodano użytkownika" + "\"}";
         }
         else {
-            out.write("Niepowodzenie dodania użytkownika");
+            JSONResponse = "{\"Response\": \"" + "Niepowodzenie dodania użytkownika" + "\"}";
         }
+        out.write(JSONResponse);
     }
 
-    private void deleteBook() {
+    private void deleteBook(String ISBN) {
         boolean result = booksDB.deleteBook(ISBN);
+        String JSONResponse;
         if (result) {
-            out.write("Pomyślnie usunięto książkę z bazy");
+            JSONResponse = "{\"Id\": \"" + ISBN
+                    + "\", \"Action\": \"" + action
+                    + "\",\"Response\": \"" + "Pomyślnie usunięto książkę z bazy" + "\"}";
         } else {
-            out.write("Niepowodzenie usunięcia książki z bazy");
+            JSONResponse = "{\"Response\": \"" + "Niepowodzenie usunięcia książki z bazy" + "\"}";
         }
+        out.write(JSONResponse);
     }
 
-    private void editBook(){
+    private void editBook(String ISBN,String title,String release_Date
+            ,String author,String publishing_House,int ownerID){
         boolean result = booksDB.editBook(ISBN, title, release_Date, author, publishing_House, ownerID);
+        String JSONResponse;
         if(result){
-            out.write("Pomyślnie zmodyfikowano książkę");
+            JSONResponse = "{\"Response\": \"" + "Pomyślnie zmodyfikowano książkę" + "\"}";
         }
         else {
-            out.write("Niepowodzenie zmiany danych książki");
+            JSONResponse = "{\"Response\": \"" + "Niepowodzenie zmiany danych książki" + "\"}";
         }
+        out.write(JSONResponse);
     }
 
-    private void addBook(){
+    private void addBook(String ISBN,String title,String release_Date
+            ,String author,String publishing_House,int ownerID){
         boolean result = booksDB.addBook(ISBN, title, release_Date, author, publishing_House, ownerID);
+        String JSONResponse;
         if(result){
-            out.write("Pomyślnie dodano książkę");
+            JSONResponse = "{\"Id\": \"" + ISBN
+                    + "\", \"Action\": \"" + action
+                    + "\",\"Response\": \"" + "Pomyślnie dodano książkę" + "\"}";
         }
         else {
-            out.write("Niepowodzenie dodania książki");
+            JSONResponse = "{\"Response\": \"" + "Niepowodzenie dodania książki" + "\"}";
         }
+        out.write(JSONResponse);
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
@@ -100,6 +117,8 @@ public class JSON extends HttpServlet {
 
         String action = request.getParameter("action");
         if (action == null) action = "";
+
+        this.action = action;
         String jsonText = null;
 
         try(BufferedReader br =
@@ -110,7 +129,7 @@ public class JSON extends HttpServlet {
             e.printStackTrace();
         }
 
-        json = new JSONObject();
+        JSONObject json = new JSONObject();
         JSONParser jsonParser = new JSONParser();
         try {
             out = response.getWriter();
@@ -128,6 +147,11 @@ public class JSON extends HttpServlet {
             }
         }
 
+        String ISBN,title,release_Date,author,publishing_House;
+        int ownerID = 0;
+
+        String username,password, firstName, lastName;
+        int id = 0, permissions = 0;
 
         ISBN = (String) json.get("ISBN");
         title = (String) json.get("Title");
@@ -153,16 +177,9 @@ public class JSON extends HttpServlet {
         if(tmp != null && !tmp.equals(""))
             ownerID = Integer.parseInt((String) json.get("OwnerID"));
 
-        String changedBook;
         int changedUser;
+        boolean permisions = false;
         switch (action) {
-            case "editUser":
-                changedUser = Integer.parseInt((String) json.get("Id"));
-                if(loggedUser.getPermissions() == 2
-                        || (loggedUser.getPermissions() >= 0 &&  changedUser == loggedUser.getId()))
-                    editUser();
-                break;
-
             case "sugestions":
                 String query = (String) json.get("wartosc");
 //        query = query.toUpperCase();
@@ -181,43 +198,66 @@ public class JSON extends HttpServlet {
 //            }
 //        }
 
-                json.put("data", data);
+                    json.put("data", data);
 
 //        out.println(json);
+                break;
+
+            case "editUser":
+                if(loggedUser.getPermissions() == 2
+                        || (loggedUser.getPermissions() >= 0 && id == loggedUser.getId())){
+                    editUser(id, username, password, permissions, firstName, lastName);
+                    permisions = true;
+                }
                 break;
 
             case "deleteUser":
                 changedUser = Integer.parseInt((String) json.get("Id"));
                 if(loggedUser.getPermissions() == 2
-                        || (loggedUser.getPermissions() >= 0 &&  changedUser == loggedUser.getId()))
-                    deleteUser();
+                        || (loggedUser.getPermissions() >= 0 && changedUser == loggedUser.getId())){
+                    deleteUser(id);
+                    permisions = true;
+                }
                 break;
 
             case "addUser":
-                if(loggedUser.getPermissions() == 2)
-                    addUser();
+                if(loggedUser.getPermissions() == 2){
+                    addUser(id, username, password, permissions, firstName, lastName);
+                    permisions = true;
+                }
+
                 break;
 
             case "deleteBook":
-                changedBook = (String) json.get("ISBN");
                 if(loggedUser.getPermissions() == 2
-                        || (loggedUser.getPermissions() >= 1)) /* TODO dodać weryfikcaję kto jest autorem &&
-                        changedBook.getAuthor == loggedUser.getId() */
-                    deleteBook();
+                        || (loggedUser.getPermissions() == 1 && loggedUser.getId() == ownerID)){
+                    deleteBook(ISBN);
+                    permisions = true;
+                }
                 break;
 
             case "editBook":
-                changedBook = (String) json.get("ISBN");
                 if(loggedUser.getPermissions() == 2
-                        || (loggedUser.getPermissions() >= 1)) /* TODO dodać weryfikcaję kto jest autorem &&
-                        changedBook.getAuthor == loggedUser.getId() */
-                    editBook();
+                        || (loggedUser.getPermissions() == 1 && loggedUser.getId() == ownerID)){
+                    editBook(ISBN, title, release_Date, author, publishing_House, ownerID);
+                    permisions = true;
+                }
                 break;
 
             case "addBook":
-                if(loggedUser.getPermissions() >= 1)
-                    addBook();
+                if(loggedUser.getPermissions() == 1){
+                    ownerID = loggedUser.getId();
+                    addBook(ISBN, title, release_Date, author, publishing_House, ownerID);
+                    permisions = true;
+                }
+                else if (loggedUser.getPermissions() == 2){
+                    addBook(ISBN, title, release_Date, author, publishing_House, ownerID);
+                    permisions = true;
+                }
                 break;
+        }
+        if(!permisions){
+            out.write("{\"Response\": \"" + "Niewystraczające uprawninia do wykonania tej operacji" + "\"}");
         }
 
         out.close();

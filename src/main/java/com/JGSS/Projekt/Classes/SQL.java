@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 public class SQL{
-    public static final String DRIVER = "org.sqlite.JDBC";
-    public static final String DB_URL = "jdbc:sqlite:";
+    private static final String DRIVER = "org.sqlite.JDBC";
+    private static final String DB_URL = "jdbc:sqlite:";
 
     private Connection conn;
     private PreparedStatement stat;
@@ -231,7 +231,7 @@ public class SQL{
 
     public boolean addUser(String userName, String password,
                             int permisions, String firstName, String lastName){
-        int resultInt = 0;
+        int resultInt = -1;
         String SQLQuery = "INSERT INTO Users\n" +
                 "(Username, Password, Permissions, FirstName, LastName)" +
                 "VALUES (?, ?, ?, ?, ?);";
@@ -255,7 +255,7 @@ public class SQL{
         }
 
 
-        return resultInt == 1;
+        return resultInt >= 0;
     }
 
     public LinkedList<LinkedList> getAllBooks(){
@@ -264,6 +264,39 @@ public class SQL{
         try {
             String SQLQuery = "SELECT * FROM 'Books';";
             stat = conn.prepareStatement(SQLQuery);
+            ResultSet result =
+                    stat.executeQuery();
+            while(result.next()) {
+                LinkedList<String> book = new LinkedList<>();
+                book.add(result.getString("ISBN"));
+                book.add(result.getString("Title"));
+                book.add(result.getString("Release_Date"));
+                book.add(result.getString("Author"));
+                book.add(result.getString("Publishing_House"));
+                book.add(result.getString("OwnerID"));
+                allBooks.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return allBooks;
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return allBooks;
+    }
+
+    public LinkedList<LinkedList> getUserBooks(User loggedUser){
+        LinkedList<LinkedList> allBooks = new LinkedList<>();
+
+        try {
+            String SQLQuery = "SELECT * FROM 'Books' WHERE OwnerID = ?;";
+            stat = conn.prepareStatement(SQLQuery);
+            stat.setInt(1, loggedUser.getId());
             ResultSet result =
                     stat.executeQuery();
             while(result.next()) {
@@ -303,7 +336,7 @@ public class SQL{
             stat.setString(3, release_Date);
             stat.setString(4, author);
             stat.setString(5, publishing_House);
-            stat.setInt(5, ownerID);
+            stat.setInt(6, ownerID);
             resultInt =
                     stat.executeUpdate();
         } catch (SQLException throwables) {
