@@ -14,6 +14,7 @@
     <title>Projekt - Gwiazda, Stuglik</title>
     <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
     <script type="text/javascript" src="JS/main.js"></script>
+    <script type="text/javascript" src="JS/translations.js"></script>
 </head>
 <%
     loggedUser = (User) session.getAttribute("loggedUser");
@@ -61,7 +62,7 @@
     <div id="container">
         <jsp:include page="/WEB-INF/View/header.jsp"/>
         <jsp:include page="/WEB-INF/View/menu.jsp" />
-        <div id="srodek">
+        <div id="middle">
             <div id="tresc">
                 <jsp:include page="/WEB-INF/View/content.jsp">
                     <jsp:param name="web_page" value="<%=pageString%>"/>

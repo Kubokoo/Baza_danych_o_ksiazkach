@@ -15,11 +15,11 @@
     <thead>
     <tr>
         <td>ISBN</td>
-        <td>Title</td>
-        <td>Release_Date</td>
-        <td>Author</td>
-        <td>Publishing_House</td>
-        <td>OwnerID</td>
+        <td>Tytuł</td>
+        <td>Data publikacji</td>
+        <td>Autor</td>
+        <td>Wydawca</td>
+        <td>Identyfikator właściciela</td>
         <td>Akcje</td>
     </tr>
     </thead>
@@ -104,12 +104,12 @@
 <table id="tableUserAdd" style="display: none">
     <thead>
         <tr>
-            <td style="display:none;">ID</td>
-            <td>Username</td>
-            <td>Password</td>
-            <td>Permissions</td>
-            <td>FirstName</td>
-            <td>LastName</td>
+            <td style="display:none;">Identyfikator</td>
+            <td>Login użytkonika</td>
+            <td>Hasło</td>
+            <td>Uprawnienia</td>
+            <td>Imię</td>
+            <td>Nazwisko</td>
             <td>Akcje</td>
         </tr>
     </thead>

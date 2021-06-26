@@ -15,11 +15,11 @@
     <thead>
     <tr>
         <td>ISBN</td>
-        <td>Title</td>
-        <td>Release_Date</td>
-        <td>Author</td>
-        <td>Publishing_House</td>
-        <td>OwnerID</td>
+        <td>Tytuł</td>
+        <td>Data publikacji</td>
+        <td>Autor</td>
+        <td>Wydawca</td>
+        <td>Identyfikator właściciela</td>
         <td>Akcje</td>
     </tr>
     </thead>

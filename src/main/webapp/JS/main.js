@@ -1,6 +1,6 @@
 // function formatISBN(fieldID){ //TODO przenieść do backend i wstawiać myślniki po przysłaniu
-//     var element = document.getElementById(fieldID);
-//     var value = element.value;
+//     let element = document.getElementById(fieldID);
+//     let value = element.value;
 //     switch (value.length) {
 //         case 3:
 //             // value+="-";
@@ -13,10 +13,10 @@
 // }
 
 // function validateISBN(fieldID){ //TODO Przenieść do backend
-//     var field = document.getElementById(fieldID);
+//     let field = document.getElementById(fieldID);
 //     if (field.value.length == 10){
-//         var res = 0;
-//         for(var i = 0; i < field.value.length; i++){
+//         let res = 0;
+//         for(let i = 0; i < field.value.length; i++){
 //             res += field.value[i] * i + 1;
 //         }
 //         res = res % 11;
@@ -25,13 +25,27 @@
 //
 //     }
 // }
+
+function translateColumns(tHead){
+    for (let i = 0; i < tHead.length; i++){
+        for (let key in translatons) {
+            if (translatons.hasOwnProperty(key)) {
+                if(key == tHead[i].textContent){
+                    tHead[i].textContent = translatons[key];
+                }
+            }
+        }
+
+    }
+}
+
 function setHint(elementId, responseText){
-    var elem = document.getElementById(elementId)
-    var result = "";
+    let elem = document.getElementById(elementId)
+    let result = "";
     if(responseText != ""){
-        var response = JSON.parse(responseText);
-        var fieldElementId = elementId.replace("_Result","");
-        for(var i = 0; i < response.hint.length; i++){
+        let response = JSON.parse(responseText);
+        let fieldElementId = elementId.replace("_Result","");
+        for(let i = 0; i < response.hint.length; i++){
             result += "<div class='fieldHelper' "
                 + "onclick='setSugestion(\"" + fieldElementId + "\", \"" + response.hint[i]+"\")'>"
                 + response.hint[i] + "</div>";
@@ -42,25 +56,26 @@ function setHint(elementId, responseText){
 
 function message(jsonMessage) {
     if(jsonMessage){
-        var jsonContent = JSON.parse(jsonMessage);
+        const jsonContent = JSON.parse(jsonMessage);
         if(jsonContent.Action){
+            let tr;
             switch(jsonContent.Action){
                 case "deleteUser":
-                    var tr = document.getElementById("userID_" + jsonContent.Id);
+                    tr = document.getElementById("userID_" + jsonContent.Id);
                     tr.parentNode.deleteRow(tr.rowIndex - 1);
                     break;
 
                 case "deleteBook":
-                    var tr = document.getElementById("deleteBook_" + jsonContent.Id);
+                    tr = document.getElementById("deleteBook_" + jsonContent.Id);
                     tr.parentNode.parentNode.parentNode.deleteRow(tr.rowIndex - 1);
                     break;
                 // case "addUser": //TODO przenieść akcje z wcześniejszego rekordu ze zmianą id w akcjach
-                //     var tr = document.getElementById("tableUserAdd").rows[1];
+                //     let tr = document.getElementById("tableUserAdd").rows[1];
                 //     tr = tr.cloneNode(true);
                 //     tr.children[0].display = "table-cell";
                 //
                 //
-                //     var targetTable = document.getElementById("tableUsersBody");
+                //     let targetTable = document.getElementById("tableUsersBody");
                 //     targetTable.appendChild(tr);
                 //     break;
             }
@@ -73,37 +88,38 @@ function message(jsonMessage) {
 const IDregex = /[a-zA-Z]+[_]{1}/;
 
 function bookUserButton(element, action){
+    let content, id;
     switch (action) {
         case "editUser": case "addUser":
-            var content = JSON.parse('{"Id": "", "Username": "","Password": "", "Permissions": "", "FirstName": "","LastName": ""}');
+            content = JSON.parse('{"Id": "", "Username": "","Password": "", "Permissions": "", "FirstName": "","LastName": ""}');
             break;
 
         case "editBook": case "addBook":
-            var content = JSON.parse('{"ISBN": "", "Title": "","Release_Date": "", "Author": "", "Publishing_House": "","OwnerID": ""}');
+            content = JSON.parse('{"ISBN": "", "Title": "","Release_Date": "", "Author": "", "Publishing_House": "","OwnerID": ""}');
             break;
 
         case "deleteUser":
-            var id = element.id.replace(IDregex,"");
-            var content = JSON.parse('{"Id": "' + id + '"}');
+            id = element.id.replace(IDregex,"");
+            content = JSON.parse('{"Id": "' + id + '"}');
             sendAsync("JSON?page=profile&action=deleteUser", "POST", JSON.stringify(content), "application/json", null);
             return;
 
         case "deleteBook":
-            var id = element.id.replace(IDregex,"");
-            var content = JSON.parse('{"ISBN": "' + id + '"}');
+            id = element.id.replace(IDregex,"");
+            content = JSON.parse('{"ISBN": "' + id + '"}');
             sendAsync("JSON?page=profile&action=deleteBook", "POST", JSON.stringify(content), "application/json", null);
             return;
     }
 
-    var tr = element.parentElement.parentElement;
+    let tr = element.parentElement.parentElement;
 
-    var properties = [];
-    for(var i = 0; i < tr.childElementCount - 1; i++){
+    let properties = [];
+    for(let i = 0; i < tr.childElementCount - 1; i++){
         properties[i] = tr.children[i].children[0].value;
     }
 
-    var i = 0;
-    for (var key in content) {
+    let i = 0;
+    for (let key in content) {
         if (content.hasOwnProperty(key)) {
             content[key] = properties[i];
             i++;
@@ -134,15 +150,15 @@ function getSugestions(fieldID) {
     if(fieldID) {
         if(fieldID.value){
             if (fieldID.value.length < 3){
-                var element = document.getElementById(fieldID.id+"_Result").childNodes;
-                var elementLength = element.length;
-                for (var i = 0; i < elementLength; i++){
+                let element = document.getElementById(fieldID.id+"_Result").childNodes;
+                let elementLength = element.length;
+                for (let i = 0; i < elementLength; i++){
                     element[0].remove();
                 }
             }
             else if(fieldID.value.length >= 3){
-                var fieldResult = document.getElementById(fieldID.id+"_Result");
-                var resultField = "<div class='fieldHelper'>" + "Ładuję dane..." + "</div>";
+                let fieldResult = document.getElementById(fieldID.id+"_Result");
+                let resultField = "<div class='fieldHelper'>" + "Ładuję dane..." + "</div>";
 
                 fieldResult.innerHTML = resultField;
 
@@ -154,7 +170,7 @@ function getSugestions(fieldID) {
 }
 
 function setSugestion(fieldID, data){
-    var field = document.getElementById(fieldID);
+    let field = document.getElementById(fieldID);
     field.value = data;
 }
 
@@ -168,7 +184,7 @@ function sendAsync (url, method, data, dataType, elementId){
         return null;
     }
 
-    var requester = new XMLHttpRequest();
+    let requester = new XMLHttpRequest();
 
     requester.open(method, url);
     requester.setRequestHeader("Content-Type", dataType);
@@ -205,38 +221,38 @@ function changeInputFor(tHead, tBody){
     const params = Object.fromEntries(urlSearchParams.entries());
     const page = params.page;
 
-    for (var i = 0; i < tHead.length; i++){
+    for (let i = 0; i < tHead.length; i++){
         if(tHead[i].textContent == "Id"){
-            for(var j = 0; j < tBody.childElementCount; j++){
-                var trBody = tBody.children[j].children;
+            for(let j = 0; j < tBody.childElementCount; j++){
+                let trBody = tBody.children[j].children;
                 trBody[i].children[0].disabled = true;
             }
 
         }
         else if(tHead[i].textContent == "Password") {
-            for(var j = 0; j < tBody.childElementCount; j++){
-                var trBody = tBody.children[j].children;
+            for(let j = 0; j < tBody.childElementCount; j++){
+                let trBody = tBody.children[j].children;
                 trBody[i].children[0].type = "password";
                 trBody[i].children[0].placeholder = "bez zmiany hasła";
             }
         }
         else if(tHead[i].textContent == "Release_Date"){
-            for(var j = 0; j < tBody.childElementCount; j++){
-                var trBody = tBody.children[j].children;
+            for(let j = 0; j < tBody.childElementCount; j++){
+                let trBody = tBody.children[j].children;
                 trBody[i].children[0].type = "date";
             }
         }
         else if(tHead[i].textContent == "Permissions"){
-            for(var j = 0; j < tBody.childElementCount; j++){
-                var trBody = tBody.children[j].children;
+            for(let j = 0; j < tBody.childElementCount; j++){
+                let trBody = tBody.children[j].children;
                 trBody[i].children[0].type = "number";
                 trBody[i].children[0].min = 0;
                 trBody[i].children[0].max = 2;
             }
         }
         else if(tHead[i].textContent == "OwnerID"){
-            for(var j = 0; j < tBody.childElementCount; j++){
-                var trBody = tBody.children[j].children;
+            for(let j = 0; j < tBody.childElementCount; j++){
+                let trBody = tBody.children[j].children;
                 trBody[i].children[0].type = "number";
                 trBody[i].children[0].min = 0;
                 if(page == "browseBooks")
@@ -244,8 +260,8 @@ function changeInputFor(tHead, tBody){
             }
         }
         // else if(tHead[i].textContent == "ISBN"){
-        //     for(var j = 0; j < tBody.childElementCount; j++){
-        //         var trBody = tBody.children[j].children;
+        //     for(let j = 0; j < tBody.childElementCount; j++){
+        //         let trBody = tBody.children[j].children;
         //         trBody[i].children[0].disabled = disabled;
         //     }
         // }
@@ -253,20 +269,22 @@ function changeInputFor(tHead, tBody){
 }
 
 window.onload = function changeInputType(){
-    var fieldUsers = document.getElementById("tableUsersBody");
-    var fieldBooks = document.getElementById("tableBooksBody");
+    let fieldUsers = document.getElementById("tableUsersBody");
+    let fieldBooks = document.getElementById("tableBooksBody");
 
-    var tHead,tBody;
+    let tHead,tBody;
     if (fieldUsers != null){
         tHead = fieldUsers.children["0"].children[0].children;
         tBody = fieldUsers.children["1"];
 
         changeInputFor(tHead, tBody);
+        translateColumns(tHead);
     }
     if(fieldBooks != null){
         tHead = fieldBooks.children["0"].children[0].children;
         tBody = fieldBooks.children["1"];
 
         changeInputFor(tHead, tBody);
+        translateColumns(tHead);
     }
 }

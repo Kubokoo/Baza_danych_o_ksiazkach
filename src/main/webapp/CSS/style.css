@@ -11,7 +11,7 @@ html {
 #container{
     width: 90%;
     font-family: "Tahoma", "sans-serif";
-    font-size: 11pt;
+    font-size: 12pt;
     margin: auto;
     background-color: #79ffe3;
     border: 4px solid #49fae9;
@@ -144,6 +144,10 @@ td p{
     text-align: center;
 }
 
+#middle{
+    padding: 0 6px;
+}
+
 #menu input{
     width: 146px;
     padding-bottom: 5px;
@@ -179,7 +183,7 @@ input:invalid {
 }
 
 .login_outForm{
-    width: 365px;
+    width: 400px;
     float: right;
     display: inline;
 }
