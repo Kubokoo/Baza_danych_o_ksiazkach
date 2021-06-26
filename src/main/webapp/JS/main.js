@@ -28,15 +28,16 @@
 function setHint(elementId, responseText){
     var elem = document.getElementById(elementId)
     var result = "";
-    var response = JSON.parse(responseText);
-    var fieldElementId = elementId.replace("_Result","");
-    for(var i = 0; i < response.hint.length; i++){
-        result += "<div class='fieldHelper' "
-            + "onclick='setSugestion(\"" + fieldElementId + "\", \"" + response.hint[i]+"\")'>"
-            + response.hint[i] + "</div>";
-        // result += "<div class='lista'>" + response.hint[i] + "</div>";
+    if(responseText != ""){
+        var response = JSON.parse(responseText);
+        var fieldElementId = elementId.replace("_Result","");
+        for(var i = 0; i < response.hint.length; i++){
+            result += "<div class='fieldHelper' "
+                + "onclick='setSugestion(\"" + fieldElementId + "\", \"" + response.hint[i]+"\")'>"
+                + response.hint[i] + "</div>";
+        }
+        elem.innerHTML = result;
     }
-    elem.innerHTML = result;
 }
 
 function message(jsonMessage) {
@@ -157,8 +158,7 @@ function setSugestion(fieldID, data){
     field.value = data;
 }
 
-function sendAsync (url, method, data, dataType, elementId){ //TODO ogarnąć callback żeby zwracało wynik dopiero po
-    // wykoaniu
+function sendAsync (url, method, data, dataType, elementId){
     method = method || "GET";
     data = data || null;
     dataType = dataType || "text/plain";

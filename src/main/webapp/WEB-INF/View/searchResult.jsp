@@ -46,19 +46,23 @@
         <td><input type="text" value="<%= valBook %>"></td>
         <% } %>
         <td>
-            <label
-                    for="changeBook_<%=book.get(0)%>"><img class="icon" alt="edit" src="Img/Pencil.png"></label>
-            <button id="changeBook_<%=book.get(0)%>" class="deleteButton"
-                    onclick="bookUserButton(this, 'editBook')">
-                Zmień
-            </button>
-            <label for="deleteBook_<%=book.get(0)%>">
-                <img class="icon" alt="remove" src="Img/Trashcan.png">
-            </label>
-            <button id="deleteBook_<%=book.get(0)%>" class="deleteButton"
-                    onclick="bookUserButton(this, 'deleteBook')">
-                Usuń
-            </button>
+            <% if (loggedUser.getPermissions() > 0) { %>
+                <label
+                        for="changeBook_<%=book.get(0)%>"><img class="icon" alt="edit" src="Img/Pencil.png"></label>
+                <button id="changeBook_<%=book.get(0)%>" class="deleteButton"
+                        onclick="bookUserButton(this, 'editBook')">
+                    Zmień
+                </button>
+                <label for="deleteBook_<%=book.get(0)%>">
+                    <img class="icon" alt="remove" src="Img/Trashcan.png">
+                </label>
+                <button id="deleteBook_<%=book.get(0)%>" class="deleteButton"
+                        onclick="bookUserButton(this, 'deleteBook')">
+                    Usuń
+                </button>
+            <% } else { %>
+                <p> Brak </p>
+            <% } %>
         </td>
         <% } %>
     </tr>

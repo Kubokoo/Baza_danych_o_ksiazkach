@@ -140,6 +140,10 @@ td{
     padding: 3px;
 }
 
+td p{
+    text-align: center;
+}
+
 #menu input{
     width: 146px;
     padding-bottom: 5px;
