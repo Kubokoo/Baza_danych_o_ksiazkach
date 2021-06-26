@@ -295,51 +295,84 @@ public class SQL{
                                                  String author, String publishing_House, boolean hint) {
         LinkedList<LinkedList> allBooks = new LinkedList<>();
 
+        String SQLQuery = "SELECT * FROM 'Books' WHERE '1'='1'";
+
         String column = "";
         if (Objects.equals(ISBN, "")) ISBN = null;
         else if(!Objects.equals(ISBN, null) && hint){
-            ISBN = ISBN + "%";
             column = "ISBN";
+        }
+
+        if(!Objects.equals(ISBN, null)){
+            ISBN += "%";
+            SQLQuery += "AND ISBN LIKE ? ";
         }
 
         if (Objects.equals(title, "")) title = null;
         else if(!Objects.equals(title, null)  &&  hint){
-            title = title + "%";
             column = "Title";
         }
 
+        if(!Objects.equals(title, null)){
+            title += "%";
+            SQLQuery += "AND Title LIKE ? ";
+        }
+
         if (Objects.equals(release_Date, "")) release_Date = null;
-        else if(!Objects.equals(release_Date, null) &&  hint) column = "Release_Date";
+        else if(!Objects.equals(release_Date, null) &&  hint){
+            column = "Release_Date";
+        }
+
+        if(!Objects.equals(release_Date, null)){
+            SQLQuery += "AND Release_Date LIKE ? ";
+        }
 
         if (Objects.equals(author, "")) author = null;
         else if(!Objects.equals(author, null)  &&  hint){
-            author = author + "%";
             column = "Author";
+        }
+
+        if(!Objects.equals(author, null)){
+            author += "%";
+            SQLQuery += "AND Author LIKE ? ";
         }
 
         if (Objects.equals(publishing_House, "")) publishing_House = null;
         else if(!Objects.equals(publishing_House, null) && hint){
-            publishing_House = publishing_House + "%";
             column = "Publishing_House";
+        }
+        if(!Objects.equals(publishing_House, null)){
+            publishing_House += "%";
+            SQLQuery += "AND Publishing_House LIKE ? ";
         }
 
         try {
-            String SQLQuery;
-
-            SQLQuery = "SELECT * FROM 'Books' WHERE" +
-                    " ISBN LIKE IFNULL(?,ISBN) AND" +
-                    " Title  LIKE IFNULL(?,Title) AND" +
-                    " Release_Date  LIKE IFNULL(?,Release_Date) AND" +
-                    " Author  LIKE IFNULL(?,Author) AND" +
-                    " Publishing_House  LIKE IFNULL(?,Publishing_House) ;";
-
             stat = conn.prepareStatement(SQLQuery);
+            int paramIndex = 1;
 
-            stat.setString(1, ISBN);
-            stat.setString(2, title);
-            stat.setString(3, release_Date);
-            stat.setString(4, author);
-            stat.setString(5, publishing_House);
+            if(!Objects.equals(ISBN, null)){
+                stat.setString(paramIndex, ISBN);
+                paramIndex++;
+            }
+
+            if(!Objects.equals(title, null)){
+                stat.setString(paramIndex, title);
+                paramIndex++;
+            }
+
+            if(!Objects.equals(release_Date, null)){
+                stat.setString(paramIndex, release_Date);
+                paramIndex++;
+            }
+
+            if(!Objects.equals(author, null)){
+                stat.setString(paramIndex, author);
+                paramIndex++;
+            }
+
+            if(!Objects.equals(publishing_House, null)){
+                stat.setString(paramIndex, publishing_House);
+            }
 
             ResultSet result =
                     stat.executeQuery();

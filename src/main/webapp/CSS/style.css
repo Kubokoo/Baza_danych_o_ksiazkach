@@ -198,12 +198,14 @@ input:invalid {
 
 .fieldHelper{
     display: block;
-    background-color: black;
-    color: white;
-    border: 1px solid white;
+    background-color: lightgreen;
+    color: black;
+    border: 1px solid black;
     transition: all 0.4s ease-in-out;
     text-decoration: underline;
     cursor: pointer;
+    font-weight: bold;
+    padding: 6px 4px;
 }
 
 a {
