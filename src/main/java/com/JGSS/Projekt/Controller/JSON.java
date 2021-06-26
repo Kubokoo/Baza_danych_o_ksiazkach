@@ -6,6 +6,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
@@ -18,6 +20,24 @@ public class JSON extends HttpServlet {
     private HttpSession session;
     private PrintWriter out;
     private String action;
+
+    private void hintHandler(JSONObject json, HttpServletResponse response
+            , String ISBN, String title, String release_Date
+            , String author, String publishing_House){
+        LinkedList<LinkedList> books
+                = booksDB.getSearchBooks(ISBN, title, release_Date, author, publishing_House, true);
+
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        json.put("hint", books);
+
+        out.write(json.toJSONString());
+    }
 
     private void editUser(int id, String username, String password, int permissions
             , String firstName, String lastName){
@@ -180,27 +200,9 @@ public class JSON extends HttpServlet {
         int changedUser;
         boolean permisions = false;
         switch (action) {
-            case "sugestions":
-                String query = (String) json.get("wartosc");
-//        query = query.toUpperCase();
-
-                String data = "";
-
-                String akcja = request.getParameter("akcja");
-                if (akcja == null) akcja = "";
-
-                if (akcja.equals("zaloguj"))
-
-//        ArrayList<String> sugestie = new ArrayList<>();
-//        for (String samochod: lista){
-//            if (samochod.startsWith(query)) {
-//                sugestie.add(samochod);
-//            }
-//        }
-
-                    json.put("data", data);
-
-//        out.println(json);
+            case "hintHandler":
+                hintHandler(json, response,ISBN, title, release_Date, author, publishing_House);
+                permisions = true;
                 break;
 
             case "editUser":

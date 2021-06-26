@@ -25,6 +25,19 @@
 //
 //     }
 // }
+function setHint(elementId, responseText){
+    var elem = document.getElementById(elementId)
+    var result = "";
+    var response = JSON.parse(responseText);
+    var fieldElementId = elementId.replace("_Result","");
+    for(var i = 0; i < response.hint.length; i++){
+        result += "<div class='fieldHelper' "
+            + "onclick='setSugestion(\"" + fieldElementId + "\", \"" + response.hint[i]+"\")'>"
+            + response.hint[i] + "</div>";
+        // result += "<div class='lista'>" + response.hint[i] + "</div>";
+    }
+    elem.innerHTML = result;
+}
 
 function message(jsonMessage) {
     if(jsonMessage){
@@ -56,7 +69,7 @@ function message(jsonMessage) {
     }
 }
 
-const IDregex = /[a-zA-Z]+[\"_\"]{1}/;
+const IDregex = /[a-zA-Z]+[_]{1}/;
 
 function bookUserButton(element, action){
     switch (action) {
@@ -118,19 +131,23 @@ function bookUserButton(element, action){
 
 function getSugestions(fieldID) {
     if(fieldID) {
-        var field = document.getElementById(fieldID);
-        if (field.value.length < 3){
-            var element = document.getElementById(fieldID+"_Result").childNodes;
-            var elementLength = element.length;
-            for (var i = 0; i < elementLength; i++){
-                element[0].remove();
+        if(fieldID.value){
+            if (fieldID.value.length < 3){
+                var element = document.getElementById(fieldID.id+"_Result").childNodes;
+                var elementLength = element.length;
+                for (var i = 0; i < elementLength; i++){
+                    element[0].remove();
+                }
             }
-        }
-        else if(field.value.length >= 3){
-            var fieldResult = document.getElementById(fieldID+"_Result");
-            var result = "<div class='fieldHelper' onclick='setSugestion(\"" + fieldID + "\", \"Ładuję dane...\")'>" + "Ładuję dane..." + "</div>";
+            else if(fieldID.value.length >= 3){
+                var fieldResult = document.getElementById(fieldID.id+"_Result");
+                var resultField = "<div class='fieldHelper'>" + "Ładuję dane..." + "</div>";
 
-            fieldResult.innerHTML = result;
+                fieldResult.innerHTML = resultField;
+
+                sendAsync("JSON?action=hintHandler", "POST", "{\"" + fieldID.id + "\": " +
+                    "\"" + fieldID.value + "\"}", "application/json", fieldID.id+"_Result");
+            }
         }
     }
 }
@@ -157,15 +174,13 @@ function sendAsync (url, method, data, dataType, elementId){ //TODO ogarnąć ca
     requester.setRequestHeader("Content-Type", dataType);
 
     requester.onreadystatechange = function () {
-        if(elementId){
-            el = document.getElementById(elementId);
-            el.style.display = "block";
-            el.innerHTML = "Ładuję dane...";
-        }
-
         if (requester.readyState === 4){
             if (requester.status === 200){
-                message(requester.responseText);
+                if(elementId){
+                    setHint(elementId, requester.responseText);
+                }
+                else
+                    message(requester.responseText);
             }
         }
     }
@@ -228,6 +243,12 @@ function changeInputFor(tHead, tBody){
                     trBody[i].children[0].disabled = true;
             }
         }
+        // else if(tHead[i].textContent == "ISBN"){
+        //     for(var j = 0; j < tBody.childElementCount; j++){
+        //         var trBody = tBody.children[j].children;
+        //         trBody[i].children[0].disabled = disabled;
+        //     }
+        // }
     }
 }
 

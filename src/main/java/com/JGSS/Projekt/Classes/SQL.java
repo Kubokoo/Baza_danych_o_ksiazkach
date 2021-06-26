@@ -6,6 +6,7 @@ import java.sql.*;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class SQL{
     private static final String DRIVER = "org.sqlite.JDBC";
@@ -290,6 +291,86 @@ public class SQL{
         return allBooks;
     }
 
+    public LinkedList<LinkedList> getSearchBooks(String ISBN, String title, String release_Date,
+                                                 String author, String publishing_House, boolean hint) {
+        LinkedList<LinkedList> allBooks = new LinkedList<>();
+
+        String column = "";
+        if (Objects.equals(ISBN, "")) ISBN = null;
+        else if(!Objects.equals(ISBN, null) && hint){
+            ISBN = ISBN + "%";
+            column = "ISBN";
+        }
+
+        if (Objects.equals(title, "")) title = null;
+        else if(!Objects.equals(title, null)  &&  hint){
+            title = title + "%";
+            column = "Title";
+        }
+
+        if (Objects.equals(release_Date, "")) release_Date = null;
+        else if(!Objects.equals(release_Date, null) &&  hint) column = "Release_Date";
+
+        if (Objects.equals(author, "")) author = null;
+        else if(!Objects.equals(author, null)  &&  hint){
+            author = author + "%";
+            column = "Author";
+        }
+
+        if (Objects.equals(publishing_House, "")) publishing_House = null;
+        else if(!Objects.equals(publishing_House, null) && hint){
+            publishing_House = publishing_House + "%";
+            column = "Publishing_House";
+        }
+
+        try {
+            String SQLQuery;
+
+            SQLQuery = "SELECT * FROM 'Books' WHERE" +
+                    " ISBN LIKE IFNULL(?,ISBN) AND" +
+                    " Title  LIKE IFNULL(?,Title) AND" +
+                    " Release_Date  LIKE IFNULL(?,Release_Date) AND" +
+                    " Author  LIKE IFNULL(?,Author) AND" +
+                    " Publishing_House  LIKE IFNULL(?,Publishing_House) ;";
+
+            stat = conn.prepareStatement(SQLQuery);
+
+            stat.setString(1, ISBN);
+            stat.setString(2, title);
+            stat.setString(3, release_Date);
+            stat.setString(4, author);
+            stat.setString(5, publishing_House);
+
+            ResultSet result =
+                    stat.executeQuery();
+            while (result.next()) {
+                LinkedList<String> book = new LinkedList<>();
+                if(hint)
+                    book.add(result.getString(column));
+                else{
+                    book.add(result.getString("ISBN"));
+                    book.add(result.getString("Title"));
+                    book.add(result.getString("Release_Date"));
+                    book.add(result.getString("Author"));
+                    book.add(result.getString("Publishing_House"));
+                    book.add(result.getString("OwnerID"));
+                }
+                allBooks.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return allBooks;
+        } finally {
+            try {
+                stat.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return allBooks;
+    }
+
     public LinkedList<LinkedList> getUserBooks(User loggedUser){
         LinkedList<LinkedList> allBooks = new LinkedList<>();
 
@@ -417,9 +498,9 @@ public class SQL{
 
         try {
             String SQLQuery = null;
-            if(DBName == "usersDB.db")
+            if(Objects.equals(DBName, "usersDB.db"))
                 SQLQuery = "SELECT * FROM 'Users' WHERE 0=1";
-            else if (DBName == "booksDB.db")
+            else if (Objects.equals(DBName, "booksDB.db"))
                 SQLQuery = "SELECT * FROM 'Books' WHERE 0=1";
             stat = conn.prepareStatement(SQLQuery);
             result =

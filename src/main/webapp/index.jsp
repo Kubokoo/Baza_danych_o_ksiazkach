@@ -35,7 +35,7 @@
     }
 
     String pageString = request.getParameter("page");
-    if (request.getParameter("IBAN") != null) pageString = "searchResult";
+    if (request.getParameter("ISBN") != null) pageString = "searchResult";
     if (pageString == null) pageString = "main";
 
     switch (loggedUser.getPermissions()){
