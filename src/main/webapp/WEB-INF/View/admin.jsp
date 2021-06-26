@@ -4,7 +4,6 @@
 <jsp:useBean id="columns" class="java.util.LinkedList" scope="application"/>
 <jsp:useBean id="usersDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
 <jsp:useBean id="booksDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
-<jsp:useBean id="i" class="com.JGSS.Projekt.Classes.Counter"/>
 
 <h3>Zarządzanie książkami:
     <a onclick="showTable(tableBookAdd)" style="text-decoration: underline">
@@ -48,9 +47,9 @@
         <%
             booksDB = (SQL) application.getAttribute("booksDB");
             columns = booksDB.columnsLabels();
-            for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
+            for(int i = 0; i < columns.size(); i++){
         %>
-        <td><%=columns.get(i.getI())%></td>
+        <td><%=columns.get(i)%></td>
         <% } %>
         <td>Akcje</td>
     </tr>
@@ -60,8 +59,8 @@
     <%
         String valBook;
         LinkedList allBooks = booksDB.getAllBooks();
-        for(i.setI(0); i.getI() < allBooks.size(); i.setI(i.getI()+1)){
-            LinkedList book = (LinkedList) allBooks.get(i.getI());
+        for(int i = 0; i < allBooks.size(); i++){
+            LinkedList book = (LinkedList) allBooks.get(i);
     %>
     <tr id="bookID_<%=book.get(0)%>">
         <%
@@ -139,9 +138,9 @@
         <%
             usersDB = (SQL) application.getAttribute("usersDB");
             columns = usersDB.columnsLabels();
-            for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
+            for(int i = 0; i < columns.size(); i++){
         %>
-        <td><%=columns.get(i.getI())%></td>
+        <td><%=columns.get(i)%></td>
         <% } %>
         <td>Akcje</td>
     </tr>
@@ -151,8 +150,8 @@
     <%
         String valUser = "";
         LinkedList allUsers = usersDB.getAllUsers();
-        for(i.setI(0); i.getI() < allUsers.size(); i.setI(i.getI()+1)){
-            LinkedList user = (LinkedList) allUsers.get(i.getI());
+        for(int i = 0; i < allUsers.size(); i++){
+            LinkedList user = (LinkedList) allUsers.get(i);
     %>
     <tr id="userID_<%=user.get(0)%>">
         <%

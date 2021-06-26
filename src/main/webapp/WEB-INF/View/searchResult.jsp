@@ -1,16 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <%@ page import="com.JGSS.Projekt.Classes.SQL" %>
 <%@ page import="java.util.LinkedList" %>
-<%@ page import="java.io.BufferedReader" %>
-<%@ page import="java.io.InputStreamReader" %>
-<%@ page import="java.nio.charset.StandardCharsets" %>
-<%@ page import="java.io.IOException" %>
-<%@ page import="org.json.simple.JSONObject" %>
-<%@ page import="org.json.simple.parser.JSONParser" %>
 <jsp:useBean id="loggedUser" class="com.JGSS.Projekt.Classes.User" scope="session"/>
 <jsp:useBean id="columns" class="java.util.LinkedList" scope="application"/>
 <jsp:useBean id="booksDB" class="com.JGSS.Projekt.Classes.SQL" scope="application"/>
-<jsp:useBean id="i" class="com.JGSS.Projekt.Classes.Counter"/>
 <h3>Wyniki wyszukiwania:</h3>
 <table id="tableBooksBody">
     <thead>
@@ -18,9 +11,9 @@
         <%
             booksDB = (SQL) application.getAttribute("booksDB");
             columns = booksDB.columnsLabels();
-            for(i.setI(0); i.getI() < columns.size(); i.setI(i.getI()+1)){
+            for(int i = 0; i < columns.size(); i++){
         %>
-        <td><%=columns.get(i.getI())%></td>
+        <td><%=columns.get(i)%></td>
         <% } %>
         <td>Akcje</td>
     </tr>
@@ -30,15 +23,15 @@
     <%
         String valBook;
 
-        String ISBN = (String) request.getParameter("ISBN");
-        String title = (String) request.getParameter("Title");
-        String release_Date = (String) request.getParameter("Release_Date");
-        String author = (String) request.getParameter("Author");
-        String publishing_House = (String) request.getParameter("Publishing_House");
+        String ISBN = request.getParameter("ISBN");
+        String title = request.getParameter("Title");
+        String release_Date = request.getParameter("Release_Date");
+        String author = request.getParameter("Author");
+        String publishing_House = request.getParameter("Publishing_House");
 
         LinkedList allBooks = booksDB.getSearchBooks(ISBN, title, release_Date, author, publishing_House, false);
-        for(i.setI(0); i.getI() < allBooks.size(); i.setI(i.getI()+1)){
-            LinkedList book = (LinkedList) allBooks.get(i.getI());
+        for(int i = 0; i < allBooks.size(); i++){
+            LinkedList book = (LinkedList) allBooks.get(i);
     %>
     <tr id="bookID_<%=book.get(0)%>">
         <%
